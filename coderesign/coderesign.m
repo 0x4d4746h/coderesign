@@ -153,12 +153,12 @@ static coderesign *shared_coderesign_handler = NULL;
             break;
         }
     }
-    
+
     NSString *targetPath = [_appPath stringByAppendingPathComponent:@"embedded.mobileprovision"];
     
     _provisioningTask = [[NSTask alloc] init];
     [_provisioningTask setLaunchPath:@"/bin/cp"];
-    [_provisioningTask setArguments:[NSArray arrayWithObjects:_argumentsDictionary[minus_e], targetPath, nil]];
+    [_provisioningTask setArguments:[NSArray arrayWithObjects:_argumentsDictionary[minus_p], targetPath, nil]];
     
     [_provisioningTask launch];
     
@@ -414,8 +414,8 @@ static coderesign *shared_coderesign_handler = NULL;
         [[NSFileManager defaultManager] removeItemAtPath:_workingPath error:nil];
         
         NSString *result = [[_codesigningResult stringByAppendingString:@"\n\n"] stringByAppendingString:_verificationResult];
-        NSString *coderesign_result = [NSString stringWithFormat:@"code resign result: %@", result];
-        [self _showDebugLog:coderesign_result withDebugLevel:Info];
+        //NSString *coderesign_result = [NSString stringWithFormat:@"coderesign successful";
+        [self _showDebugLog:@"coderesign successful" withDebugLevel:Info];
         exit(0);
     }
 }
