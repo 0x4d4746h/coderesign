@@ -19,7 +19,7 @@ int main(int argc, const char * argv[]) {
 
         [[coderesign sharedInstance] resignWithArgv:argv argumentsNumber: argc];
     }
-    
+
     [[NSRunLoop currentRunLoop] run];
     return 0;
 }

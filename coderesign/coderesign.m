@@ -7,6 +7,7 @@
 //
 
 #import "coderesign.h"
+
 typedef enum {
     Info = 0,
     Debug,
@@ -38,6 +39,7 @@ NSString *const kPayloadDirName = @"Payload";
 @property (nonatomic, copy) NSString *verificationResult;
 @property (nonatomic, copy) NSString *codesigningResult;
 @property (nonatomic,copy) NSString *fileName;
+@property (nonatomic, copy) NSString *cfBundleExecutable;
 
 - (void) _showDebugLog:(id)debugMessage withDebugLevel:(DebugLevel)level;
 
@@ -85,12 +87,12 @@ static coderesign *shared_coderesign_handler = NULL;
 - (void)prepare
 {
     [self _showDebugLog:@"----------------------------- Preparing...-----------------------------" withDebugLevel:Info];
-    if ([self _doCheckSystemEnvironments]) {
+    //if ([self _doCheckSystemEnvironments]) {
         if ([self _doCheckCertsFromKeychain]) {
             [self _showDebugLog:@"Prepared completed." withDebugLevel:Info];
             [self _doUnzip];
         }
-    }
+    //}
 }
 
 
@@ -111,7 +113,7 @@ static coderesign *shared_coderesign_handler = NULL;
     
     
     [_unzipTask setLaunchPath:@"/usr/bin/unzip"];
-    [_unzipTask setArguments:[NSArray arrayWithObjects:@"-q", sourcePath, @"-d", _workingPath, nil]];
+    [_unzipTask setArguments:[NSArray arrayWithObjects:@"-o", @"-q", sourcePath, @"-d", _workingPath, nil]];
     [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(checkUnzip:) userInfo:nil repeats:TRUE];
     [_unzipTask launch];
     
@@ -215,11 +217,15 @@ static coderesign *shared_coderesign_handler = NULL;
                     
                     NSLog(@"Mobileprovision identifier: %@",identifierInProvisioning);
                     
-                    NSString *infoPlist = [NSString stringWithContentsOfFile:[_appPath stringByAppendingPathComponent:@"Info.plist"] encoding:NSASCIIStringEncoding error:nil];
+                    NSString *infoPlistPath = [_appPath stringByAppendingPathComponent:@"Info.plist"];
+                    NSString *infoPlist = [NSString stringWithContentsOfFile:infoPlistPath encoding:NSASCIIStringEncoding error:nil];
                     if ([infoPlist rangeOfString:identifierInProvisioning].location != NSNotFound) {
                         NSLog(@"Identifiers match");
                         identifierOK = TRUE;
                     }
+                    
+                    [self parseInfoPlistForCFBundleExecuteValue:infoPlistPath];
+                    [self parseInfoPlistForAppInfo:infoPlistPath];
                     
                     if (identifierOK) {
                         [self _showDebugLog:@"Provisioning completed" withDebugLevel:Info];
@@ -228,7 +234,7 @@ static coderesign *shared_coderesign_handler = NULL;
                         [self _showDebugLog:@"Product identifiers don't match" withDebugLevel:Error];
                         exit(0);
                     }
-                } else {
+                }else {
                     NSString * errorInfo = [NSString stringWithFormat:@"No embedded.mobileprovision file in %@", _appPath];
                     [self _showDebugLog:errorInfo withDebugLevel:Error];
                     exit(0);
@@ -238,6 +244,51 @@ static coderesign *shared_coderesign_handler = NULL;
         }
     }
 }
+
+- (void) parseInfoPlistForCFBundleExecuteValue:(NSString *)infoPlistPath {
+    NSDictionary *infoPlist_dictionary = [[NSDictionary alloc]initWithContentsOfFile:infoPlistPath];
+    //NSLog(@"data > %@", infoPlist_dictionary);
+    if (!infoPlist_dictionary) {
+        [self _showDebugLog:@"Can't parse Info.plist for this app" withDebugLevel:Error];
+        return;
+    }
+    _cfBundleExecutable = [infoPlist_dictionary objectForKey:@"CFBundleExecutable"];
+}
+- (void) parseInfoPlistForAppInfo:(NSString *)infoPlistPath {
+    NSDictionary *infoPlist_dictionary = [[NSDictionary alloc]initWithContentsOfFile:infoPlistPath];
+    if (!infoPlist_dictionary) {
+        [self _showDebugLog:@"Can't parse Info.plist for this app" withDebugLevel:Error];
+        return;
+    }
+    NSString *_appName = [infoPlist_dictionary objectForKey:@"CFBundleDisplayName"];
+    NSString *_packageName = [infoPlist_dictionary objectForKey:@"CFBundleIdentifier"];
+    NSString *_iconName = [infoPlist_dictionary objectForKey:@"CFBundleIconFile"];
+    NSString *_version = [infoPlist_dictionary objectForKey:@"CFBundleVersion"];
+    NSString *_minSDKVersion = [infoPlist_dictionary objectForKey:@"MinimumOSVersion"];
+    NSString *_sdkVersion = [infoPlist_dictionary objectForKey:@"DTPlatformVersion"];
+    
+    NSString *icon_file = [_appPath stringByAppendingPathComponent:_iconName];
+    
+    NSString *_icon_content = [NSString stringWithContentsOfFile:icon_file encoding:NSASCIIStringEncoding error:nil];
+    if (_icon_content == NULL) {
+        _icon_content = @"";
+    }
+    NSDictionary *_appInfo = @{
+                               @"packageName":_packageName,
+                               @"appName":_appName,
+                               @"icon":_icon_content,
+                               @"version": _version,
+                               @"minOSVersion":_minSDKVersion,
+                               @"OSVersion":_sdkVersion
+                               };
+    NSData *objData = [NSJSONSerialization dataWithJSONObject:_appInfo options:NSJSONWritingPrettyPrinted error:nil];
+    NSString *jsonString = [[NSString alloc]initWithData:objData encoding:NSUTF8StringEncoding];
+    
+    NSString *_resutl = [@"<appInfo>" stringByAppendingFormat:@"%@</appInfo>", jsonString];
+    [self _showDebugLog:_resutl withDebugLevel:Info];
+    
+}
+
 - (void) _doCodeSigning {
     _appPath = nil;
     
@@ -413,9 +464,13 @@ static coderesign *shared_coderesign_handler = NULL;
         [self _showDebugLog:savedFile withDebugLevel:Info];
         [[NSFileManager defaultManager] removeItemAtPath:_workingPath error:nil];
         
-        NSString *result = [[_codesigningResult stringByAppendingString:@"\n\n"] stringByAppendingString:_verificationResult];
+        //NSString *result = [[_codesigningResult stringByAppendingString:@"\n\n"] stringByAppendingString:_verificationResult];
         //NSString *coderesign_result = [NSString stringWithFormat:@"coderesign successful";
         [self _showDebugLog:@"coderesign successful" withDebugLevel:Info];
+        
+        NSString * result = [NSString stringWithFormat:@"Result={CFBundleExecutable:%@}", _cfBundleExecutable];
+        
+        [self _showDebugLog:result withDebugLevel:Info];
         exit(0);
     }
 }
@@ -428,7 +483,7 @@ static coderesign *shared_coderesign_handler = NULL;
     
     for (int i=0; i<_argusNumber; i++) {
         
-        NSLog(@"i=%d i2=%d %s",i,i%2, argv[i]);
+        //NSLog(@"i=%d i2=%d %s",i,i%2, argv[i]);
         NSString *ns_argv = [NSString stringWithUTF8String:argv[i]];
         
         if (i%2 > 0) {
@@ -577,12 +632,12 @@ static coderesign *shared_coderesign_handler = NULL;
     for (int i=0; i< _count; i++) {
         NSString *cer_name_ = cer_results[i];
         
-        NSRange distribution_ns_range = [cer_name_ rangeOfString:DISTRIBUTION];
+       // NSRange distribution_ns_range = [cer_name_ rangeOfString:DISTRIBUTION];
         NSRange cer_index_range = [cer_name_ rangeOfString:cer_index_distribution];
         
-        if (distribution_ns_range.length > 0 && cer_index_range.length > 0) {
+        if (/*distribution_ns_range.length > 0 && */cer_index_range.length > 0) {
             _distribution_resign = cer_name_;
-            NSString *_matchedCer = [NSString stringWithFormat:@"Distribution provision <%@> will be used to resign", _distribution_resign];
+            NSString *_matchedCer = [NSString stringWithFormat:@"provision profile <%@> will be used to resign", _distribution_resign];
             [self _showDebugLog:_matchedCer withDebugLevel:Info];
             return true;
         }
