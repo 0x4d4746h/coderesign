@@ -269,14 +269,26 @@ static coderesign *shared_coderesign_handler = NULL;
     
     NSString *icon_file = [_appPath stringByAppendingPathComponent:_iconName];
     
-    NSString *_icon_content = [NSString stringWithContentsOfFile:icon_file encoding:NSASCIIStringEncoding error:nil];
-    if (_icon_content == NULL) {
-        _icon_content = @"";
+    //NSString *_icon_content = [NSString stringWithContentsOfFile:icon_file encoding:NSUTF8StringEncoding error:nil];
+    NSData *_icon_data = [[NSFileManager defaultManager]contentsAtPath:icon_file];
+    NSString *sourcePath = _argumentsDictionary[minus_d];
+    NSArray *destinationPathComponents = [sourcePath pathComponents];
+    NSString *destinationPath = @"";
+    
+    for (int i = 0; i < ([destinationPathComponents count]-1); i++) {
+        destinationPath = [destinationPath stringByAppendingPathComponent:[destinationPathComponents objectAtIndex:i]];
     }
+    NSString *outputPath = [destinationPath stringByAppendingPathComponent:@"Icon.png"];
+    BOOL isSuccess = [[NSFileManager defaultManager]createFileAtPath:outputPath contents:_icon_data attributes:nil];
+
+    //NSString *_icon_content = [[NSString alloc]initWithData:_icon_data encoding:NSASCIIStringEncoding];
+//    if (_icon_content == NULL) {
+//        _icon_content = @"";
+//    }
     NSDictionary *_appInfo = @{
                                @"packageName":_packageName,
                                @"appName":_appName,
-                               @"icon":_icon_content,
+                               @"icon":outputPath,
                                @"version": _version,
                                @"minOSVersion":_minSDKVersion,
                                @"OSVersion":_sdkVersion
