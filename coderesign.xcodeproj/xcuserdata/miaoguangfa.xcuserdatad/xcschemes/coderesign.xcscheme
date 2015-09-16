@@ -44,7 +44,7 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
@@ -97,6 +97,14 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "MM776WPM62"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-py"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "/Volumes/MacintoshHD/Projects/R&amp;D/coderesign/Release/iconDecompress.py"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

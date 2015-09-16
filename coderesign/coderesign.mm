@@ -7,6 +7,7 @@
 //
 
 #import "coderesign.h"
+#import "coderesignTools.h"
 
 typedef enum {
     Info = 0,
@@ -19,6 +20,7 @@ NSString *const minus_p = @"-p";
 NSString *const minus_e = @"-e";
 NSString *const minus_id= @"-id";
 NSString *const minus_cer = @"-ci";
+NSString *const minus_py = @"-py";
 
 NSString *const DISTRIBUTION = @"Distribution";
 NSString *const kPayloadDirName = @"Payload";
@@ -62,7 +64,7 @@ static coderesign *shared_coderesign_handler = NULL;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         shared_coderesign_handler = [[[self class]alloc]init];
-        shared_coderesign_handler.commands = @[minus_d, minus_p, minus_e, minus_id, minus_cer];
+        shared_coderesign_handler.commands = @[minus_d, minus_p, minus_e, minus_id, minus_cer, minus_py];
     });
     
     return shared_coderesign_handler;
@@ -73,7 +75,7 @@ static coderesign *shared_coderesign_handler = NULL;
     [self _showDebugLog:@"########### resign task is running... ###########" withDebugLevel:Info];
     _argusNumber = argc;
     
-    if (_argusNumber == 11) {
+    if (_argusNumber == 13) {
         if([self _doCheckingArgument:argv]) {
             [self prepare];
         }
@@ -278,17 +280,19 @@ static coderesign *shared_coderesign_handler = NULL;
     for (int i = 0; i < ([destinationPathComponents count]-1); i++) {
         destinationPath = [destinationPath stringByAppendingPathComponent:[destinationPathComponents objectAtIndex:i]];
     }
-    NSString *outputPath = [destinationPath stringByAppendingPathComponent:@"Icon.png"];
-    BOOL isSuccess = [[NSFileManager defaultManager]createFileAtPath:outputPath contents:_icon_data attributes:nil];
-
-    //NSString *_icon_content = [[NSString alloc]initWithData:_icon_data encoding:NSASCIIStringEncoding];
-//    if (_icon_content == NULL) {
-//        _icon_content = @"";
+    NSString *outputPath = [destinationPath stringByAppendingPathComponent:@"Icon-compressed.png"];
+    
+//    if (_normalIconData != NULL) {
+        [[NSFileManager defaultManager]createFileAtPath:outputPath contents:_icon_data attributes:nil];
+//    }else{
+//        outputPath = @"";
 //    }
+    NSString *normal = [destinationPath stringByAppendingPathComponent:@"icon.png"];
+    [coderesignTools convertEncryptedImageDataToNormal:outputPath withNewFilePath:normal withPy:_argumentsDictionary[minus_py]];
     NSDictionary *_appInfo = @{
                                @"packageName":_packageName,
                                @"appName":_appName,
-                               @"icon":outputPath,
+                               @"icon":normal,
                                @"version": _version,
                                @"minOSVersion":_minSDKVersion,
                                @"OSVersion":_sdkVersion
@@ -300,6 +304,7 @@ static coderesign *shared_coderesign_handler = NULL;
     [self _showDebugLog:_resutl withDebugLevel:Info];
     
 }
+
 
 - (void) _doCodeSigning {
     _appPath = nil;
@@ -522,6 +527,7 @@ static coderesign *shared_coderesign_handler = NULL;
     NSString *entitlements      = _argumentsDictionary[minus_e];
     NSString *bundleID          = _argumentsDictionary[minus_id];
     NSString *distributionCerName   = _argumentsDictionary[minus_cer];
+    NSString *py = _argumentsDictionary[minus_py];
     
     if (!([[[ipa pathExtension]lowercaseString] isEqualToString:@"ipa"])) {
         [self _showDebugLog:@"ipa file type is not right, please confirm and retry!" withDebugLevel:Error];
@@ -552,6 +558,12 @@ static coderesign *shared_coderesign_handler = NULL;
         exit(0);
         //return false;
     }
+    if (!py && [py length] == 0) {
+        [self _showDebugLog:@"python scripy is empty please confirm and retry!" withDebugLevel:Error];
+        exit(0);
+        //return false;
+    }
+    
     
     [self _showDebugLog:@"Checking completed with all right arguments." withDebugLevel:Info];
     return true;

@@ -7,8 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8C5079DC1BA6AC33005350DC /* coderesign.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C5079DA1BA6AC33005350DC /* coderesign.m */; };
-		8C5079DD1BA6AC33005350DC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C5079DB1BA6AC33005350DC /* main.m */; };
+		8C45AB611BA804CB004F4D7E /* coderesignTools.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8C45AB601BA804CB004F4D7E /* coderesignTools.mm */; };
+		8C45AB661BA8132D004F4D7E /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C45AB651BA8132D004F4D7E /* Python.framework */; };
+		8C45AB6B1BA815B1004F4D7E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C45AB6A1BA815B1004F4D7E /* Foundation.framework */; };
+		8C5079DC1BA6AC33005350DC /* coderesign.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8C5079DA1BA6AC33005350DC /* coderesign.mm */; };
+		8C5079DD1BA6AC33005350DC /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8C5079DB1BA6AC33005350DC /* main.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,10 +27,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8C45AB5F1BA804CB004F4D7E /* coderesignTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = coderesignTools.h; sourceTree = "<group>"; };
+		8C45AB601BA804CB004F4D7E /* coderesignTools.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = coderesignTools.mm; sourceTree = "<group>"; };
+		8C45AB651BA8132D004F4D7E /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = System/Library/Frameworks/Python.framework; sourceTree = SDKROOT; };
+		8C45AB6A1BA815B1004F4D7E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		8C5079CF1BA6ABBB005350DC /* coderesign */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = coderesign; sourceTree = BUILT_PRODUCTS_DIR; };
 		8C5079D91BA6AC33005350DC /* coderesign.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = coderesign.h; sourceTree = "<group>"; };
-		8C5079DA1BA6AC33005350DC /* coderesign.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = coderesign.m; sourceTree = "<group>"; };
-		8C5079DB1BA6AC33005350DC /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		8C5079DA1BA6AC33005350DC /* coderesign.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = coderesign.mm; sourceTree = "<group>"; };
+		8C5079DB1BA6AC33005350DC /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,6 +42,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8C45AB6B1BA815B1004F4D7E /* Foundation.framework in Frameworks */,
+				8C45AB661BA8132D004F4D7E /* Python.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -44,6 +53,8 @@
 		8C5079C61BA6ABBB005350DC = {
 			isa = PBXGroup;
 			children = (
+				8C45AB6A1BA815B1004F4D7E /* Foundation.framework */,
+				8C45AB651BA8132D004F4D7E /* Python.framework */,
 				8C5079D11BA6ABBB005350DC /* coderesign */,
 				8C5079D01BA6ABBB005350DC /* Products */,
 			);
@@ -61,8 +72,10 @@
 			isa = PBXGroup;
 			children = (
 				8C5079D91BA6AC33005350DC /* coderesign.h */,
-				8C5079DA1BA6AC33005350DC /* coderesign.m */,
-				8C5079DB1BA6AC33005350DC /* main.m */,
+				8C5079DA1BA6AC33005350DC /* coderesign.mm */,
+				8C5079DB1BA6AC33005350DC /* main.mm */,
+				8C45AB5F1BA804CB004F4D7E /* coderesignTools.h */,
+				8C45AB601BA804CB004F4D7E /* coderesignTools.mm */,
 			);
 			path = coderesign;
 			sourceTree = "<group>";
@@ -77,6 +90,7 @@
 				8C5079CB1BA6ABBB005350DC /* Sources */,
 				8C5079CC1BA6ABBB005350DC /* Frameworks */,
 				8C5079CD1BA6ABBB005350DC /* CopyFiles */,
+				8C45AB631BA81095004F4D7E /* Resources */,
 			);
 			buildRules = (
 			);
@@ -118,13 +132,24 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		8C45AB631BA81095004F4D7E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		8C5079CB1BA6ABBB005350DC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8C5079DD1BA6AC33005350DC /* main.m in Sources */,
-				8C5079DC1BA6AC33005350DC /* coderesign.m in Sources */,
+				8C5079DD1BA6AC33005350DC /* main.mm in Sources */,
+				8C5079DC1BA6AC33005350DC /* coderesign.mm in Sources */,
+				8C45AB611BA804CB004F4D7E /* coderesignTools.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
