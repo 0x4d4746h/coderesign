@@ -7,11 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8C45AB611BA804CB004F4D7E /* coderesignTools.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8C45AB601BA804CB004F4D7E /* coderesignTools.mm */; };
+		8C16D1161BAA5F6B004A5D3A /* replaceMobileprovision.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C16D1151BAA5F6B004A5D3A /* replaceMobileprovision.m */; };
+		8C16D1191BAA6508004A5D3A /* parseAppInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C16D1181BAA6508004A5D3A /* parseAppInfo.m */; };
+		8C16D11C1BAA6982004A5D3A /* resignAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C16D11B1BAA6982004A5D3A /* resignAction.m */; };
+		8C45AB611BA804CB004F4D7E /* decompressIcon.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8C45AB601BA804CB004F4D7E /* decompressIcon.mm */; };
 		8C45AB661BA8132D004F4D7E /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C45AB651BA8132D004F4D7E /* Python.framework */; };
-		8C45AB6B1BA815B1004F4D7E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C45AB6A1BA815B1004F4D7E /* Foundation.framework */; };
 		8C5079DC1BA6AC33005350DC /* coderesign.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8C5079DA1BA6AC33005350DC /* coderesign.mm */; };
 		8C5079DD1BA6AC33005350DC /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8C5079DB1BA6AC33005350DC /* main.mm */; };
+		8CD7CE101BA96F2700F50AB8 /* checkAvailableCerts.m in Sources */ = {isa = PBXBuildFile; fileRef = 8CD7CE0F1BA96F2700F50AB8 /* checkAvailableCerts.m */; };
+		8CD7CE131BA96F9400F50AB8 /* DebugLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 8CD7CE121BA96F9400F50AB8 /* DebugLog.m */; };
+		8CD7CE161BA970AB00F50AB8 /* SharedData.m in Sources */ = {isa = PBXBuildFile; fileRef = 8CD7CE151BA970AB00F50AB8 /* SharedData.m */; };
+		8CD7CE191BA975D100F50AB8 /* checkSystemEnvironments.m in Sources */ = {isa = PBXBuildFile; fileRef = 8CD7CE181BA975D100F50AB8 /* checkSystemEnvironments.m */; };
+		8CD7CE1C1BA9770200F50AB8 /* zipUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 8CD7CE1B1BA9770200F50AB8 /* zipUtils.m */; };
+		8CD7CE1F1BA978A000F50AB8 /* checkCommandArguments.m in Sources */ = {isa = PBXBuildFile; fileRef = 8CD7CE1E1BA978A000F50AB8 /* checkCommandArguments.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -27,14 +35,31 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		8C45AB5F1BA804CB004F4D7E /* coderesignTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = coderesignTools.h; sourceTree = "<group>"; };
-		8C45AB601BA804CB004F4D7E /* coderesignTools.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = coderesignTools.mm; sourceTree = "<group>"; };
+		8C16D1141BAA5F6B004A5D3A /* replaceMobileprovision.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = replaceMobileprovision.h; sourceTree = "<group>"; };
+		8C16D1151BAA5F6B004A5D3A /* replaceMobileprovision.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = replaceMobileprovision.m; sourceTree = "<group>"; };
+		8C16D1171BAA6508004A5D3A /* parseAppInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parseAppInfo.h; sourceTree = "<group>"; };
+		8C16D1181BAA6508004A5D3A /* parseAppInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = parseAppInfo.m; sourceTree = "<group>"; };
+		8C16D11A1BAA6982004A5D3A /* resignAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resignAction.h; sourceTree = "<group>"; };
+		8C16D11B1BAA6982004A5D3A /* resignAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = resignAction.m; sourceTree = "<group>"; };
+		8C45AB5F1BA804CB004F4D7E /* decompressIcon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = decompressIcon.h; sourceTree = "<group>"; };
+		8C45AB601BA804CB004F4D7E /* decompressIcon.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = decompressIcon.mm; sourceTree = "<group>"; };
 		8C45AB651BA8132D004F4D7E /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = System/Library/Frameworks/Python.framework; sourceTree = SDKROOT; };
-		8C45AB6A1BA815B1004F4D7E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		8C5079CF1BA6ABBB005350DC /* coderesign */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = coderesign; sourceTree = BUILT_PRODUCTS_DIR; };
 		8C5079D91BA6AC33005350DC /* coderesign.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = coderesign.h; sourceTree = "<group>"; };
 		8C5079DA1BA6AC33005350DC /* coderesign.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = coderesign.mm; sourceTree = "<group>"; };
 		8C5079DB1BA6AC33005350DC /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
+		8CD7CE0E1BA96F2700F50AB8 /* checkAvailableCerts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = checkAvailableCerts.h; sourceTree = "<group>"; };
+		8CD7CE0F1BA96F2700F50AB8 /* checkAvailableCerts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = checkAvailableCerts.m; sourceTree = "<group>"; };
+		8CD7CE111BA96F9400F50AB8 /* DebugLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugLog.h; sourceTree = "<group>"; };
+		8CD7CE121BA96F9400F50AB8 /* DebugLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DebugLog.m; sourceTree = "<group>"; };
+		8CD7CE141BA970AB00F50AB8 /* SharedData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedData.h; sourceTree = "<group>"; };
+		8CD7CE151BA970AB00F50AB8 /* SharedData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SharedData.m; sourceTree = "<group>"; };
+		8CD7CE171BA975D100F50AB8 /* checkSystemEnvironments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = checkSystemEnvironments.h; sourceTree = "<group>"; };
+		8CD7CE181BA975D100F50AB8 /* checkSystemEnvironments.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = checkSystemEnvironments.m; sourceTree = "<group>"; };
+		8CD7CE1A1BA9770200F50AB8 /* zipUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zipUtils.h; sourceTree = "<group>"; };
+		8CD7CE1B1BA9770200F50AB8 /* zipUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = zipUtils.m; sourceTree = "<group>"; };
+		8CD7CE1D1BA978A000F50AB8 /* checkCommandArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = checkCommandArguments.h; sourceTree = "<group>"; };
+		8CD7CE1E1BA978A000F50AB8 /* checkCommandArguments.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = checkCommandArguments.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,7 +67,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8C45AB6B1BA815B1004F4D7E /* Foundation.framework in Frameworks */,
 				8C45AB661BA8132D004F4D7E /* Python.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -53,8 +77,7 @@
 		8C5079C61BA6ABBB005350DC = {
 			isa = PBXGroup;
 			children = (
-				8C45AB6A1BA815B1004F4D7E /* Foundation.framework */,
-				8C45AB651BA8132D004F4D7E /* Python.framework */,
+				8CD7CE0D1BA96E5000F50AB8 /* frameworks */,
 				8C5079D11BA6ABBB005350DC /* coderesign */,
 				8C5079D01BA6ABBB005350DC /* Products */,
 			);
@@ -71,13 +94,39 @@
 		8C5079D11BA6ABBB005350DC /* coderesign */ = {
 			isa = PBXGroup;
 			children = (
+				8C5079DB1BA6AC33005350DC /* main.mm */,
 				8C5079D91BA6AC33005350DC /* coderesign.h */,
 				8C5079DA1BA6AC33005350DC /* coderesign.mm */,
-				8C5079DB1BA6AC33005350DC /* main.mm */,
-				8C45AB5F1BA804CB004F4D7E /* coderesignTools.h */,
-				8C45AB601BA804CB004F4D7E /* coderesignTools.mm */,
+				8C45AB5F1BA804CB004F4D7E /* decompressIcon.h */,
+				8C45AB601BA804CB004F4D7E /* decompressIcon.mm */,
+				8CD7CE0E1BA96F2700F50AB8 /* checkAvailableCerts.h */,
+				8CD7CE0F1BA96F2700F50AB8 /* checkAvailableCerts.m */,
+				8CD7CE111BA96F9400F50AB8 /* DebugLog.h */,
+				8CD7CE121BA96F9400F50AB8 /* DebugLog.m */,
+				8CD7CE141BA970AB00F50AB8 /* SharedData.h */,
+				8CD7CE151BA970AB00F50AB8 /* SharedData.m */,
+				8CD7CE171BA975D100F50AB8 /* checkSystemEnvironments.h */,
+				8CD7CE181BA975D100F50AB8 /* checkSystemEnvironments.m */,
+				8CD7CE1A1BA9770200F50AB8 /* zipUtils.h */,
+				8CD7CE1B1BA9770200F50AB8 /* zipUtils.m */,
+				8CD7CE1D1BA978A000F50AB8 /* checkCommandArguments.h */,
+				8CD7CE1E1BA978A000F50AB8 /* checkCommandArguments.m */,
+				8C16D1141BAA5F6B004A5D3A /* replaceMobileprovision.h */,
+				8C16D1151BAA5F6B004A5D3A /* replaceMobileprovision.m */,
+				8C16D1171BAA6508004A5D3A /* parseAppInfo.h */,
+				8C16D1181BAA6508004A5D3A /* parseAppInfo.m */,
+				8C16D11A1BAA6982004A5D3A /* resignAction.h */,
+				8C16D11B1BAA6982004A5D3A /* resignAction.m */,
 			);
 			path = coderesign;
+			sourceTree = "<group>";
+		};
+		8CD7CE0D1BA96E5000F50AB8 /* frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8C45AB651BA8132D004F4D7E /* Python.framework */,
+			);
+			name = frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -147,9 +196,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8C16D1191BAA6508004A5D3A /* parseAppInfo.m in Sources */,
+				8CD7CE101BA96F2700F50AB8 /* checkAvailableCerts.m in Sources */,
+				8CD7CE1C1BA9770200F50AB8 /* zipUtils.m in Sources */,
+				8CD7CE191BA975D100F50AB8 /* checkSystemEnvironments.m in Sources */,
+				8CD7CE1F1BA978A000F50AB8 /* checkCommandArguments.m in Sources */,
 				8C5079DD1BA6AC33005350DC /* main.mm in Sources */,
+				8CD7CE131BA96F9400F50AB8 /* DebugLog.m in Sources */,
+				8C16D11C1BAA6982004A5D3A /* resignAction.m in Sources */,
 				8C5079DC1BA6AC33005350DC /* coderesign.mm in Sources */,
-				8C45AB611BA804CB004F4D7E /* coderesignTools.mm in Sources */,
+				8CD7CE161BA970AB00F50AB8 /* SharedData.m in Sources */,
+				8C16D1161BAA5F6B004A5D3A /* replaceMobileprovision.m in Sources */,
+				8C45AB611BA804CB004F4D7E /* decompressIcon.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

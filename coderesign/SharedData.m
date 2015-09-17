@@ -1,0 +1,43 @@
+//
+//  SharedData.m
+//  coderesign
+//
+//  Created by MiaoGuangfa on 9/16/15.
+//  Copyright (c) 2015 MiaoGuangfa. All rights reserved.
+//
+
+#import "SharedData.h"
+
+NSString *const KReplaceMobileProvisionNotification = @"key.replace.mobileProvision.notification";
+NSString *const KCodeResignNotification = @"key.coderesign.notification";
+
+NSString *const minus_d = @"-d";
+NSString *const minus_p = @"-p";
+NSString *const minus_e = @"-e";
+NSString *const minus_id= @"-id";
+NSString *const minus_cer = @"-ci";
+NSString *const minus_py = @"-py";
+
+NSString *const DISTRIBUTION = @"Distribution";
+NSString *const kPayloadDirName = @"Payload";
+
+static SharedData *_instance = NULL;
+
+@implementation SharedData
+
+
++ (SharedData *)sharedInstance {
+
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _instance = [[[self class]alloc]init];
+        _instance.standardCommands = @[minus_d, minus_p, minus_e, minus_id, minus_cer, minus_py];
+        _instance.workingPath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"com.0x4d4746h.resign"];
+    });
+    
+    return _instance;
+}
+
+
+
+@end

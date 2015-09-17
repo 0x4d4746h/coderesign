@@ -12,6 +12,6 @@
 
 + (id) sharedInstance;
 - (void) resignWithArgv:(const char *[])argv argumentsNumber:(int)argc;
-- (void) prepare;
+- (void) start;
 
 @end

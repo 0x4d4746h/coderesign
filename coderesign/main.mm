@@ -11,12 +11,6 @@
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
-        
-        //Test code
-        //const char* test_argv[] = {"/Users/miaoguangfa/Desktop/codesign", "-d", "app", "-p", "mobileprovision", "-e", "entitlements", "-id", "com.0x4d4746h.coderesign"};
-       // int test_argc = sizeof(&test_argv);
-        //int argcs = argc;
-
         [[coderesign sharedInstance] resignWithArgv:argv argumentsNumber: argc];
     }
 

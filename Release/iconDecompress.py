@@ -31,14 +31,14 @@ import os
 
 
 def updatePNG(compressedFileName, newfileName):
-    print ("#### start to convert %s to %s ####" % (compressedFileName, newfileName))
+    print ("[Python :]start to convert %s to %s " % (compressedFileName, newfileName))
 
     pngheader = "\x89PNG\r\n\x1a\n"
     file = open(compressedFileName, "rb")
     oldPNG = file.read()
     file.close()
     if oldPNG[:8] != pngheader:
-        print "pngheader is not match"
+        print "[Python :]pngheader is not match"
         return None
     newPNG = oldPNG[:8]
     
@@ -107,5 +107,5 @@ def updatePNG(compressedFileName, newfileName):
         file = open(newfileName, "wb")
         file.write(newPNG)
         file.close()
-        print "#### Convert ipa icon done ####"
+        print "[Python :]Convert ipa icon done"
 
