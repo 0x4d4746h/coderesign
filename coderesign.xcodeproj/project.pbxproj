@@ -10,6 +10,7 @@
 		8C16D1161BAA5F6B004A5D3A /* replaceMobileprovision.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C16D1151BAA5F6B004A5D3A /* replaceMobileprovision.m */; };
 		8C16D1191BAA6508004A5D3A /* parseAppInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C16D1181BAA6508004A5D3A /* parseAppInfo.m */; };
 		8C16D11C1BAA6982004A5D3A /* resignAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C16D11B1BAA6982004A5D3A /* resignAction.m */; };
+		8C16D1201BAA9D9A004A5D3A /* checkAppCPUConstruction.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C16D11F1BAA9D9A004A5D3A /* checkAppCPUConstruction.m */; };
 		8C45AB611BA804CB004F4D7E /* decompressIcon.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8C45AB601BA804CB004F4D7E /* decompressIcon.mm */; };
 		8C45AB661BA8132D004F4D7E /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C45AB651BA8132D004F4D7E /* Python.framework */; };
 		8C5079DC1BA6AC33005350DC /* coderesign.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8C5079DA1BA6AC33005350DC /* coderesign.mm */; };
@@ -41,6 +42,8 @@
 		8C16D1181BAA6508004A5D3A /* parseAppInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = parseAppInfo.m; sourceTree = "<group>"; };
 		8C16D11A1BAA6982004A5D3A /* resignAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resignAction.h; sourceTree = "<group>"; };
 		8C16D11B1BAA6982004A5D3A /* resignAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = resignAction.m; sourceTree = "<group>"; };
+		8C16D11E1BAA9D9A004A5D3A /* checkAppCPUConstruction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = checkAppCPUConstruction.h; sourceTree = "<group>"; };
+		8C16D11F1BAA9D9A004A5D3A /* checkAppCPUConstruction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = checkAppCPUConstruction.m; sourceTree = "<group>"; };
 		8C45AB5F1BA804CB004F4D7E /* decompressIcon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = decompressIcon.h; sourceTree = "<group>"; };
 		8C45AB601BA804CB004F4D7E /* decompressIcon.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = decompressIcon.mm; sourceTree = "<group>"; };
 		8C45AB651BA8132D004F4D7E /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = System/Library/Frameworks/Python.framework; sourceTree = SDKROOT; };
@@ -117,6 +120,8 @@
 				8C16D1181BAA6508004A5D3A /* parseAppInfo.m */,
 				8C16D11A1BAA6982004A5D3A /* resignAction.h */,
 				8C16D11B1BAA6982004A5D3A /* resignAction.m */,
+				8C16D11E1BAA9D9A004A5D3A /* checkAppCPUConstruction.h */,
+				8C16D11F1BAA9D9A004A5D3A /* checkAppCPUConstruction.m */,
 			);
 			path = coderesign;
 			sourceTree = "<group>";
@@ -200,6 +205,7 @@
 				8CD7CE101BA96F2700F50AB8 /* checkAvailableCerts.m in Sources */,
 				8CD7CE1C1BA9770200F50AB8 /* zipUtils.m in Sources */,
 				8CD7CE191BA975D100F50AB8 /* checkSystemEnvironments.m in Sources */,
+				8C16D1201BAA9D9A004A5D3A /* checkAppCPUConstruction.m in Sources */,
 				8CD7CE1F1BA978A000F50AB8 /* checkCommandArguments.m in Sources */,
 				8C5079DD1BA6AC33005350DC /* main.mm in Sources */,
 				8CD7CE131BA96F9400F50AB8 /* DebugLog.m in Sources */,

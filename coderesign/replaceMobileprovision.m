@@ -121,8 +121,8 @@ static replaceMobileprovision *_instance = NULL;
                     
                     if (identifierOK) {
                         [DebugLog showDebugLog:Pass];
+                        [[NSNotificationCenter defaultCenter]postNotificationName:KCheckCPUNotification object:@(CPU_CHECK)];
                         
-                        [[NSNotificationCenter defaultCenter]postNotificationName:KCodeResignNotification object:@(Code_Resign)];
                     } else {
                         [DebugLog showDebugLog:@"Product identifiers don't match" withDebugLevel:Error];
                         exit(0);

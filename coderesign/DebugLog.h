@@ -17,7 +17,8 @@ typedef enum {
     Pass = 0,
     Failed,
     AllPass,
-    AllDone
+    AllDone,
+    Warning
 }DebugResult;
 
 @interface DebugLog : NSObject

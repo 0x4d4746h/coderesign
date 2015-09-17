@@ -16,7 +16,7 @@
 #import "zipUtils.h"
 #import "replaceMobileprovision.h"
 #import "resignAction.h"
-
+#import "checkAppCPUConstruction.h"
 
 @interface coderesign ()
 
@@ -36,6 +36,7 @@ static coderesign *shared_coderesign_handler = NULL;
         
         [[NSNotificationCenter defaultCenter]addObserver:shared_coderesign_handler selector:@selector(NotificationEvent:) name:KReplaceMobileProvisionNotification object:nil];
         [[NSNotificationCenter defaultCenter]addObserver:shared_coderesign_handler selector:@selector(NotificationEvent:) name:KCodeResignNotification object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:shared_coderesign_handler selector:@selector(NotificationEvent:) name:KCheckCPUNotification object:nil];
     });
     
     return shared_coderesign_handler;
@@ -68,7 +69,11 @@ static coderesign *shared_coderesign_handler = NULL;
     if (_type == Replace_MobileProvision) {
         [[replaceMobileprovision sharedInstance]replace];
     }else if (_type == Code_Resign) {
+        
         [[resignAction sharedInstance]resign];
+    }else if (_type == CPU_CHECK){
+        [[[checkAppCPUConstruction alloc]init]check];
+        
     }
 }
 

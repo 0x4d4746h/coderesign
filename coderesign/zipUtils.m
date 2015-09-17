@@ -76,6 +76,7 @@ static zipUtils *_instance = NULL;
         [[NSFileManager defaultManager] removeItemAtPath:[SharedData sharedInstance].workingPath error:nil];
         
         [DebugLog showDebugLog:@"coderesign successful" withDebugLevel:Info];
+        
         [DebugLog showDebugLog:AllDone];
         exit(0);
     }

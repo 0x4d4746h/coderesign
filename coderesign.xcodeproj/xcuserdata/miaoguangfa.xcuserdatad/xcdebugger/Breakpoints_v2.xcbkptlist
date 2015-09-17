@@ -9,13 +9,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "coderesign/checkSystemEnvironments.m"
-            timestampString = "464154583.885646"
+            filePath = "coderesign/checkAppCPUConstruction.m"
+            timestampString = "464167379.917591"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "37"
-            endingLineNumber = "37"
-            landmarkName = "+doCheckSystemEnvironments"
+            startingLineNumber = "24"
+            endingLineNumber = "24"
+            landmarkName = "-check"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

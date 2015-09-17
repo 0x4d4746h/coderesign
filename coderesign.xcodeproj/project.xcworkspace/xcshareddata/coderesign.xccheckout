@@ -7,14 +7,14 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>EC78A5FC-4C4D-4E8E-8F30-AC8C7A62A4E8</string>
 	<key>IDESourceControlProjectName</key>
-	<string>coderesign</string>
+	<string>project</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>902AC8C7270F8DB3EE2DE713663D2D56A923E996</key>
 		<string>https://github.com/0x4d4746h/coderesign.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>coderesign.xcodeproj</string>
+	<string>coderesign.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>902AC8C7270F8DB3EE2DE713663D2D56A923E996</key>

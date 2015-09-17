@@ -10,6 +10,7 @@
 
 FOUNDATION_EXTERN NSString *const KReplaceMobileProvisionNotification;
 FOUNDATION_EXTERN NSString *const KCodeResignNotification;
+FOUNDATION_EXPORT NSString *const KCheckCPUNotification;
 
 FOUNDATION_EXPORT NSString *const minus_d;
 FOUNDATION_EXPORT NSString *const minus_p;
@@ -24,6 +25,7 @@ FOUNDATION_EXPORT NSString *const kPayloadDirName;
 typedef enum {
     Replace_MobileProvision = 0,
     Code_Resign,
+    CPU_CHECK
     
 }NotificationType;
 

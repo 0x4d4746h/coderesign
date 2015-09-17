@@ -9,4 +9,5 @@ dependencies: \
   /Volumes/MacintoshHD/Projects/R&D/coderesign/coderesign/checkCommandArguments.h \
   /Volumes/MacintoshHD/Projects/R&D/coderesign/coderesign/zipUtils.h \
   /Volumes/MacintoshHD/Projects/R&D/coderesign/coderesign/replaceMobileprovision.h \
-  /Volumes/MacintoshHD/Projects/R&D/coderesign/coderesign/resignAction.h
+  /Volumes/MacintoshHD/Projects/R&D/coderesign/coderesign/resignAction.h \
+  /Volumes/MacintoshHD/Projects/R&D/coderesign/coderesign/checkAppCPUConstruction.h

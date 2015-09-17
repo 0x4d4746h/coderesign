@@ -10,6 +10,7 @@
 
 NSString *const KReplaceMobileProvisionNotification = @"key.replace.mobileProvision.notification";
 NSString *const KCodeResignNotification = @"key.coderesign.notification";
+NSString *const KCheckCPUNotification = @"key.checkCPU.notification";
 
 NSString *const minus_d = @"-d";
 NSString *const minus_p = @"-p";
