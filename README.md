@@ -1,4 +1,5 @@
 # coderesign
+# What
 This is a tool for resigning ipa package with your distribution provisioning profile.
 ### (Include Individual and Enterprise distribution provisioning profile)
 
