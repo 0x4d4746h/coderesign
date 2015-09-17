@@ -1,7 +1,6 @@
-# coderesign
-# What
-This is a tool for resigning ipa package with your distribution provisioning profile.
-### (Include Individual and Enterprise distribution provisioning profile)
+# What's it
+* This is a tool for resigning ipa package with your distribution provisioning profile.
+* Include Individual and Enterprise distribution provisioning profile
 
 # Requirements
 * Mac OS 9.0 +
@@ -17,10 +16,10 @@ This is a tool for resigning ipa package with your distribution provisioning pro
 * Support resign ipa file for Individual & Enterprise provision profile that related to developer or distribution cert.
 
 # More information:
-### if you want to resign the third ipa package with Individual distribution provision profile
+#### if you want to resign the third ipa package with Individual distribution provision profile
 option -ci: App ID prefix should be passed that you can find this value from developer.apple.com when you creating app id. For example : "BXTP48X8WA"
 
-### if you want to resign the third ipa package with Enterprise  distribution provision profile
+#### if you want to resign the third ipa package with Enterprise  distribution provision profile
 option -ci: distribution name should be passed that you can find this value from keychain tools.
 For example: "iPhone Distribution: Beijing xxx Network Technology Co., Ltd.", you should only pass "Beijing xxx Network Technology Co., Ltd".
 
