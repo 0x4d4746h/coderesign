@@ -20,6 +20,6 @@ For example: "iPhone Distribution: Beijing xxx Network Technology Co., Ltd.", yo
 These specifications and coderesign are available under the MIT license.
 
 # Screenshot of running result:
-![Image][https://github.com/0x4d4746h/coderesign/blob/master/result_screenshot.png]
+![Image text](https://raw.githubusercontent.com/0x4d4746h/coderesign/master/result_screenshot.png)
 
 
