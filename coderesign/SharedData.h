@@ -14,8 +14,8 @@ FOUNDATION_EXPORT NSString *const KCheckCPUNotification;
 
 FOUNDATION_EXPORT NSString *const minus_d;
 FOUNDATION_EXPORT NSString *const minus_p;
-FOUNDATION_EXPORT NSString *const minus_e;
-FOUNDATION_EXPORT NSString *const minus_id;
+//FOUNDATION_EXPORT NSString *const minus_e;
+//FOUNDATION_EXPORT NSString *const minus_id;
 FOUNDATION_EXPORT NSString *const minus_cer;
 FOUNDATION_EXPORT NSString *const minus_py;
 FOUNDATION_EXPORT NSString *const minus_h;
@@ -45,6 +45,9 @@ typedef enum {
 
 @property (nonatomic, copy) NSString *resignedCerName;
 
+@property (nonatomic, copy) NSString *tempPath;
+@property (nonatomic, copy) NSString *commandPath;
+@property (nonatomic, copy) NSString *entitlementsPlistPath;
 + (SharedData *) sharedInstance;
 
 @end

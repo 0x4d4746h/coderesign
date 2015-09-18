@@ -14,8 +14,8 @@ NSString *const KCheckCPUNotification = @"key.checkCPU.notification";
 
 NSString *const minus_d = @"-d";
 NSString *const minus_p = @"-p";
-NSString *const minus_e = @"-e";
-NSString *const minus_id= @"-id";
+//NSString *const minus_e = @"-e";
+//NSString *const minus_id= @"-id";
 NSString *const minus_cer = @"-ci";
 NSString *const minus_py = @"-py";
 NSString *const minus_h = @"-h";
@@ -33,7 +33,7 @@ static SharedData *_instance = NULL;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _instance = [[[self class]alloc]init];
-        _instance.standardCommands = @[minus_d, minus_p, minus_e, minus_id, minus_cer, minus_py];
+        _instance.standardCommands = @[minus_d, minus_p, minus_cer, minus_py];
         _instance.workingPath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"com.0x4d4746h.resign"];
     });
     

@@ -74,9 +74,8 @@ static zipUtils *_instance = NULL;
         NSString *savedFile = [NSString stringWithFormat:@"Zipping done, file name is %@",_fileName];
         [DebugLog showDebugLog:savedFile withDebugLevel:Info];
         [[NSFileManager defaultManager] removeItemAtPath:[SharedData sharedInstance].workingPath error:nil];
-        
+        [[NSFileManager defaultManager] removeItemAtPath:[SharedData sharedInstance].tempPath error:nil];
         [DebugLog showDebugLog:@"coderesign successful" withDebugLevel:Info];
-        
         [DebugLog showDebugLog:AllDone];
         exit(0);
     }

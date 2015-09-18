@@ -72,23 +72,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/Volumes/MacintoshHD/Projects/R&amp;D/coderesign/Release/iOSAutomator_dev.mobileprovision"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-e"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "/Volumes/MacintoshHD/Projects/R&amp;D/coderesign/Release/entitlements.plist"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-id"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "com.0x4d4746h.app"
+            argument = "/Volumes/MacintoshHD/Projects/R&amp;D/coderesign/Release/ZhengTuClientDistribution.mobileprovision"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -96,7 +80,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "MM776WPM62"
+            argument = "BXTP48X8WA"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

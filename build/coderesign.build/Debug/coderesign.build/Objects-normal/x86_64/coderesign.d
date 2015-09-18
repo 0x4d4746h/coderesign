@@ -11,4 +11,5 @@ dependencies: \
   /Volumes/MacintoshHD/Projects/R&D/coderesign/coderesign/replaceMobileprovision.h \
   /Volumes/MacintoshHD/Projects/R&D/coderesign/coderesign/resignAction.h \
   /Volumes/MacintoshHD/Projects/R&D/coderesign/coderesign/checkAppCPUConstruction.h \
-  /Volumes/MacintoshHD/Projects/R&D/coderesign/coderesign/Usage.h
+  /Volumes/MacintoshHD/Projects/R&D/coderesign/coderesign/Usage.h \
+  /Volumes/MacintoshHD/Projects/R&D/coderesign/coderesign/securityEncodeDecodeMobileProvision.h

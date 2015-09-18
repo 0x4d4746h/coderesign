@@ -43,36 +43,42 @@ static parseAppInfo *_instance = NULL;
     NSString *_sdkVersion       = [infoPlist_dictionary objectForKey:@"DTPlatformVersion"];
     NSString *_cfBundleExecutable = [infoPlist_dictionary objectForKey:@"CFBundleExecutable"];
     
-    NSString *icon_file         = [[SharedData sharedInstance].appPath stringByAppendingPathComponent:_iconName];
     
-    NSData *_icon_data = [[NSFileManager defaultManager]contentsAtPath:icon_file];
-    NSString *sourcePath = [SharedData sharedInstance].crossedArguments[minus_d];
-    NSArray *destinationPathComponents = [sourcePath pathComponents];
-    NSString *destinationPath = @"";
-    
-    for (int i = 0; i < ([destinationPathComponents count]-1); i++) {
-        destinationPath = [destinationPath stringByAppendingPathComponent:[destinationPathComponents objectAtIndex:i]];
+    NSString *normal_icon = @"";
+    if (_iconName != nil) {
+
+        NSString *icon_file   = [[SharedData sharedInstance].appPath stringByAppendingPathComponent:_iconName];
+        NSData *_icon_data = [[NSFileManager defaultManager]contentsAtPath:icon_file];
+        NSString *destinationPath = [SharedData sharedInstance].commandPath;
+        
+        NSString *outputPath = [destinationPath stringByAppendingPathComponent:@"Icon-compressed.png"];
+        [[NSFileManager defaultManager]createFileAtPath:outputPath contents:_icon_data attributes:nil];
+        
+        normal_icon = [destinationPath stringByAppendingPathComponent:@"icon.png"];
+        [decompressIcon convertEncryptedImageDataToNormal:outputPath withNewFilePath:normal_icon withPy:[SharedData sharedInstance].crossedArguments[minus_py]];
     }
     
-    NSString *outputPath = [destinationPath stringByAppendingPathComponent:@"Icon-compressed.png"];
-    [[NSFileManager defaultManager]createFileAtPath:outputPath contents:_icon_data attributes:nil];
-
-    NSString *normal = [destinationPath stringByAppendingPathComponent:@"icon.png"];
-    [decompressIcon convertEncryptedImageDataToNormal:outputPath withNewFilePath:normal withPy:[SharedData sharedInstance].crossedArguments[minus_py]];
     NSDictionary *_appInfo = @{
-                                   @"packageName"       :   _packageName,
-                                   @"appName"           :   _appName,
-                                   @"icon"              :   normal,
-                                   @"version"           :   _version,
-                                   @"minOSVersion"      :   _minSDKVersion,
-                                   @"OSVersion"         :   _sdkVersion,
-                                   @"CFBuldleExecutable":   _cfBundleExecutable
+                               @"packageName"       :   [self nilToString:_packageName],
+                               @"appName"           :   [self nilToString:_appName],
+                               @"icon"              :   [self nilToString:normal_icon],
+                               @"version"           :   [self nilToString:_version],
+                               @"minOSVersion"      :   [self nilToString:_minSDKVersion],
+                               @"OSVersion"         :   [self nilToString:_sdkVersion],
+                               @"CFBuldleExecutable":   [self nilToString:_cfBundleExecutable]
                                };
     NSData *objData = [NSJSONSerialization dataWithJSONObject:_appInfo options:NSJSONWritingPrettyPrinted error:nil];
     NSString *jsonString = [[NSString alloc]initWithData:objData encoding:NSUTF8StringEncoding];
     
     NSString *_resutl = [@"<appInfo>" stringByAppendingFormat:@"%@</appInfo>", jsonString];
     [DebugLog showDebugLog:_resutl withDebugLevel:Info];
+}
+
+- (id)nilToString:(id)object {
+    if (object == nil) {
+        return @"";
+    }
+    return object;
 }
 
 @end

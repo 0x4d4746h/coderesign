@@ -18,6 +18,7 @@
 #import "resignAction.h"
 #import "checkAppCPUConstruction.h"
 #import "Usage.h"
+#import "securityEncodeDecodeMobileProvision.h"
 
 @interface coderesign ()
 
@@ -65,6 +66,7 @@ static coderesign *shared_coderesign_handler = NULL;
 
 - (void)start
 {
+    [[securityEncodeDecodeMobileProvision sharedInstance]dumpEntitlements];
     if ([checkSystemEnvironments doCheckSystemEnvironments]) {
         if ([checkAvailableCerts isExistAvailableCerts]) {
             [[zipUtils sharedInstance]doUnZip];

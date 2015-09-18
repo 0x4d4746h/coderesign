@@ -51,8 +51,8 @@
     
     NSString *ipa               = [SharedData sharedInstance].crossedArguments[minus_d];
     NSString *mobileProvision   = [SharedData sharedInstance].crossedArguments[minus_p];
-    NSString *entitlements      = [SharedData sharedInstance].crossedArguments[minus_e];
-    NSString *bundleID          = [SharedData sharedInstance].crossedArguments[minus_id];
+   // NSString *entitlements      = [SharedData sharedInstance].crossedArguments[minus_e];
+   // NSString *bundleID          = [SharedData sharedInstance].crossedArguments[minus_id];
     NSString *distributionCerName   = [SharedData sharedInstance].crossedArguments[minus_cer];
     NSString *py = [SharedData sharedInstance].crossedArguments[minus_py];
     
@@ -66,15 +66,15 @@
         exit(0);
     }
     
-    if (!([[[entitlements pathExtension]lowercaseString] isEqualToString:@"plist"])) {
-        [DebugLog showDebugLog:@"entitlements file type is not right, please confirm and retry!" withDebugLevel:Error];
-        exit(0);
-    }
+//    if (!([[[entitlements pathExtension]lowercaseString] isEqualToString:@"plist"])) {
+//        [DebugLog showDebugLog:@"entitlements file type is not right, please confirm and retry!" withDebugLevel:Error];
+//        exit(0);
+//    }
     
-    if (!bundleID && [bundleID length] == 0) {
-        [DebugLog showDebugLog:@"bundle identifler can't be empty, please confirm and retry!" withDebugLevel:Error];
-        exit(0);
-    }
+//    if (!bundleID && [bundleID length] == 0) {
+//        [DebugLog showDebugLog:@"bundle identifler can't be empty, please confirm and retry!" withDebugLevel:Error];
+//        exit(0);
+//    }
     
     if (!distributionCerName && [distributionCerName length] == 0) {
         [DebugLog showDebugLog:@"distributionCer name or App ID prefiex can't be empty, please confirm and retry!" withDebugLevel:Error];
@@ -86,6 +86,18 @@
     }
     
     [DebugLog showDebugLog:Pass];
+    
+    NSString *sourcePath = [SharedData sharedInstance].crossedArguments[minus_d];
+    NSArray *destinationPathComponents = [sourcePath pathComponents];
+    NSString *destinationPath = @"";
+    
+    for (int i = 0; i < ([destinationPathComponents count]-1); i++) {
+        destinationPath = [destinationPath stringByAppendingPathComponent:[destinationPathComponents objectAtIndex:i]];
+    }
+    NSString *_tempPath = [destinationPath stringByAppendingPathComponent:@"temp"];
+    [[NSFileManager defaultManager]createDirectoryAtPath:_tempPath withIntermediateDirectories:YES attributes:nil error:nil];
+    [SharedData sharedInstance].commandPath = destinationPath;
+    [SharedData sharedInstance].tempPath = _tempPath;
     return true;
 }
 @end

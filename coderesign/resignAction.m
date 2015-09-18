@@ -82,7 +82,7 @@ static resignAction *_instance = NULL;
         }
         
         
-        [arguments addObject:[NSString stringWithFormat:@"--entitlements=%@", [SharedData sharedInstance].crossedArguments[minus_e]]];
+        [arguments addObject:[NSString stringWithFormat:@"--entitlements=%@", [SharedData sharedInstance].entitlementsPlistPath]];
         
         
         [arguments addObjectsFromArray:[NSArray arrayWithObjects:[SharedData sharedInstance].appPath, nil]];

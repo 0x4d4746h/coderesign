@@ -111,22 +111,28 @@ static replaceMobileprovision *_instance = NULL;
                     NSLog(@"Mobileprovision identifier: %@",identifierInProvisioning);
                     
                     NSString *infoPlistPath = [[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"Info.plist"];
+                    NSMutableDictionary *infoPlistDic = [[NSMutableDictionary alloc]initWithContentsOfFile:infoPlistPath];
+                    
                     NSString *infoPlist = [NSString stringWithContentsOfFile:infoPlistPath encoding:NSASCIIStringEncoding error:nil];
                     if ([infoPlist rangeOfString:identifierInProvisioning].location != NSNotFound) {
                         NSLog(@"Identifiers match");
                         identifierOK = TRUE;
                     }
                     
-                    [[parseAppInfo sharedInstance]parse:infoPlistPath];
-                    
                     if (identifierOK) {
+                        [[parseAppInfo sharedInstance]parse:infoPlistPath];
                         [DebugLog showDebugLog:Pass];
-                        [[NSNotificationCenter defaultCenter]postNotificationName:KCheckCPUNotification object:@(CPU_CHECK)];
+                        
                         
                     } else {
-                        [DebugLog showDebugLog:@"Product identifiers don't match" withDebugLevel:Error];
-                        exit(0);
+                        
+                        [DebugLog showDebugLog:@"Product identifiers don't match, try to change Info.plist with specific app ID" withDebugLevel:Info];
+                        [infoPlistDic setValue:identifierInProvisioning forKey:@"CFBundleIdentifier"];
+                        [infoPlistDic writeToFile:infoPlistPath atomically:YES];
+                        [[parseAppInfo sharedInstance]parse:infoPlistPath];
                     }
+                    
+                    [[NSNotificationCenter defaultCenter]postNotificationName:KCheckCPUNotification object:@(CPU_CHECK)];
                 }else {
                     NSString * errorInfo = [NSString stringWithFormat:@"No embedded.mobileprovision file in %@", [SharedData sharedInstance].appPath];
                     [DebugLog showDebugLog:errorInfo withDebugLevel:Error];

@@ -16,6 +16,7 @@
 		8C45AB661BA8132D004F4D7E /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C45AB651BA8132D004F4D7E /* Python.framework */; };
 		8C5079DC1BA6AC33005350DC /* coderesign.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8C5079DA1BA6AC33005350DC /* coderesign.mm */; };
 		8C5079DD1BA6AC33005350DC /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8C5079DB1BA6AC33005350DC /* main.mm */; };
+		8C7BCCA31BABEDEA00FEC67E /* securityEncodeDecodeMobileProvision.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C7BCCA21BABEDEA00FEC67E /* securityEncodeDecodeMobileProvision.m */; };
 		8CD7CE101BA96F2700F50AB8 /* checkAvailableCerts.m in Sources */ = {isa = PBXBuildFile; fileRef = 8CD7CE0F1BA96F2700F50AB8 /* checkAvailableCerts.m */; };
 		8CD7CE131BA96F9400F50AB8 /* DebugLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 8CD7CE121BA96F9400F50AB8 /* DebugLog.m */; };
 		8CD7CE161BA970AB00F50AB8 /* SharedData.m in Sources */ = {isa = PBXBuildFile; fileRef = 8CD7CE151BA970AB00F50AB8 /* SharedData.m */; };
@@ -54,6 +55,8 @@
 		8C5079D91BA6AC33005350DC /* coderesign.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = coderesign.h; sourceTree = "<group>"; };
 		8C5079DA1BA6AC33005350DC /* coderesign.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = coderesign.mm; sourceTree = "<group>"; };
 		8C5079DB1BA6AC33005350DC /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
+		8C7BCCA11BABEDEA00FEC67E /* securityEncodeDecodeMobileProvision.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = securityEncodeDecodeMobileProvision.h; sourceTree = "<group>"; };
+		8C7BCCA21BABEDEA00FEC67E /* securityEncodeDecodeMobileProvision.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = securityEncodeDecodeMobileProvision.m; sourceTree = "<group>"; };
 		8CD7CE0E1BA96F2700F50AB8 /* checkAvailableCerts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = checkAvailableCerts.h; sourceTree = "<group>"; };
 		8CD7CE0F1BA96F2700F50AB8 /* checkAvailableCerts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = checkAvailableCerts.m; sourceTree = "<group>"; };
 		8CD7CE111BA96F9400F50AB8 /* DebugLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugLog.h; sourceTree = "<group>"; };
@@ -127,6 +130,8 @@
 				8C16D11F1BAA9D9A004A5D3A /* checkAppCPUConstruction.m */,
 				8C1620AD1BAACA5400E27CE1 /* Usage.h */,
 				8C1620AE1BAACA5400E27CE1 /* Usage.m */,
+				8C7BCCA11BABEDEA00FEC67E /* securityEncodeDecodeMobileProvision.h */,
+				8C7BCCA21BABEDEA00FEC67E /* securityEncodeDecodeMobileProvision.m */,
 			);
 			path = coderesign;
 			sourceTree = "<group>";
@@ -209,6 +214,7 @@
 				8C16D1191BAA6508004A5D3A /* parseAppInfo.m in Sources */,
 				8CD7CE101BA96F2700F50AB8 /* checkAvailableCerts.m in Sources */,
 				8CD7CE1C1BA9770200F50AB8 /* zipUtils.m in Sources */,
+				8C7BCCA31BABEDEA00FEC67E /* securityEncodeDecodeMobileProvision.m in Sources */,
 				8CD7CE191BA975D100F50AB8 /* checkSystemEnvironments.m in Sources */,
 				8C16D1201BAA9D9A004A5D3A /* checkAppCPUConstruction.m in Sources */,
 				8C1620AF1BAACA5400E27CE1 /* Usage.m in Sources */,
