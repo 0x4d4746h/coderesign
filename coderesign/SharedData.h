@@ -18,6 +18,7 @@ FOUNDATION_EXPORT NSString *const minus_e;
 FOUNDATION_EXPORT NSString *const minus_id;
 FOUNDATION_EXPORT NSString *const minus_cer;
 FOUNDATION_EXPORT NSString *const minus_py;
+FOUNDATION_EXPORT NSString *const minus_h;
 
 FOUNDATION_EXPORT NSString *const DISTRIBUTION;
 FOUNDATION_EXPORT NSString *const kPayloadDirName;

@@ -18,6 +18,7 @@ NSString *const minus_e = @"-e";
 NSString *const minus_id= @"-id";
 NSString *const minus_cer = @"-ci";
 NSString *const minus_py = @"-py";
+NSString *const minus_h = @"-h";
 
 NSString *const DISTRIBUTION = @"Distribution";
 NSString *const kPayloadDirName = @"Payload";

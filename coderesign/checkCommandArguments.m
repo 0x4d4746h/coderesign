@@ -18,7 +18,9 @@
     
     if (argc < ([SharedData sharedInstance].standardCommands.count +1)) {
         // show the command's useage
+
         [DebugLog showDebugLog:@"More or less arguments for codreesign, please confirm and retry!" withDebugLevel:Error];
+        
         exit(0);
     }
     

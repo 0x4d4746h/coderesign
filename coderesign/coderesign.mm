@@ -17,6 +17,7 @@
 #import "replaceMobileprovision.h"
 #import "resignAction.h"
 #import "checkAppCPUConstruction.h"
+#import "Usage.h"
 
 @interface coderesign ()
 
@@ -44,6 +45,17 @@ static coderesign *shared_coderesign_handler = NULL;
 
 - (void)resignWithArgv:(const char *[])argv argumentsNumber:(int)argc
 {
+    if (argc == 1) {
+        [Usage print:nil];
+        exit(0);
+    }else if (argc == 2){
+        NSString *_h = [NSString stringWithUTF8String:argv[1]];
+        if ([_h  isEqual: @"-h"]) {
+            [Usage print:_h];
+            exit(0);
+        }
+    }
+        
     [DebugLog showDebugLog:@"coderesign task is running..." withDebugLevel:Info];
 
     if([checkCommandArguments checkArguments:argv number:argc]) {
