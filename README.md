@@ -23,10 +23,17 @@ option -ci: App ID prefix should be passed that you can find this value from dev
 option -ci: distribution name should be passed that you can find this value from keychain tools.
 For example: "iPhone Distribution: Beijing xxx Network Technology Co., Ltd.", you should only pass "Beijing xxx Network Technology Co., Ltd".
 
+# Screenshot of running result:
+![Image text](https://raw.githubusercontent.com/0x4d4746h/coderesign/master/result_screenshot.png)
+
+# Usage:
+Enter <pre>coderesign</pre> and return, or
+Enter <pre>coderesign -h</pre>and return.
+![Image text](https://raw.githubusercontent.com/0x4d4746h/coderesign/master/Usage.png)
+
 # License
 These specifications and coderesign are available under the MIT license.
 
-# Screenshot of running result:
-![Image text](https://raw.githubusercontent.com/0x4d4746h/coderesign/master/result_screenshot.png)
+
 
 
