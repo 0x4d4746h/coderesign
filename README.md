@@ -15,7 +15,7 @@
 * Support dump the specific app info.
 * Support resign ipa file for Individual & Enterprise provision profile that related to developer or distribution cert.
 
-# More information:
+# One More Thing:
 #### if you want to resign the third ipa package with Individual distribution provision profile
 option -ci: App ID prefix should be passed that you can find this value from developer.apple.com when you creating app id. For example : "BXTP48X8WA"
 
