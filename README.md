@@ -7,7 +7,7 @@
 * Xcode6.0+ with development tools
 
 # How to use
-<pre>coderesign -d /you/ipa/path/xx.ipa -p your_distribution.mobileprovision -e your_entitlements.plist -id com.your.newbundleID -ci certificates_index -py your-python</pre>
+<pre>coderesign -d /you/ipa/path/xx.ipa -p your_distribution.mobileprovision -ci certificates_index -py your-python</pre>
 
 # Support list:
 * Support decompress the icon file from ipa.
