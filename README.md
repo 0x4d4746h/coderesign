@@ -17,7 +17,7 @@
 
 # One More Thing:
 #### if you want to resign the third ipa package with Individual distribution provision profile
-option -ci: App ID prefix should be passed that you can find this value from developer.apple.com when you creating app id. For example : "BXTP48X8WA"
+option -ci: App ID prefix should be passed that you can find this value from developer.apple.com when you creating app id, or find it from keychain tools if you have been installed the cert. For example : "BXTP48X8WA"
 
 #### if you want to resign the third ipa package with Enterprise  distribution provision profile
 option -ci: distribution name should be passed that you can find this value from keychain tools.
