@@ -22,6 +22,7 @@ FOUNDATION_EXPORT NSString *const minus_h;
 
 //FOUNDATION_EXPORT NSString *const DISTRIBUTION;
 FOUNDATION_EXPORT NSString *const kPayloadDirName;
+FOUNDATION_EXPORT NSString *const kFrameworksDirName;
 
 typedef enum {
     Replace_MobileProvision = 0,

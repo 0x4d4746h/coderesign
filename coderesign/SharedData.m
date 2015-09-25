@@ -22,6 +22,7 @@ NSString *const minus_h = @"-h";
 
 //NSString *const DISTRIBUTION = @"Distribution";
 NSString *const kPayloadDirName = @"Payload";
+NSString *const kFrameworksDirName  = @"Frameworks";
 
 static SharedData *_instance = NULL;
 

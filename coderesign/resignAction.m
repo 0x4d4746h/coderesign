@@ -19,6 +19,9 @@
 @property (nonatomic, copy) NSString *coderesignResult;
 @property (nonatomic, copy) NSString *verificationResult;
 
+@property (nonatomic, strong)NSMutableArray *frameworks;
+@property (nonatomic, assign) BOOL hasFrameworks;
+
 @end
 
 static resignAction *_instance = NULL;
@@ -39,11 +42,31 @@ static resignAction *_instance = NULL;
     [SharedData sharedInstance].appPath = nil;
     
     NSArray *dirContents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[[SharedData sharedInstance].workingPath stringByAppendingPathComponent:kPayloadDirName] error:nil];
+    NSString * frameworksDirPath = nil;
+    _hasFrameworks = NO;
+    _frameworks = [[NSMutableArray alloc]init];
+    NSString *frameworkPath = nil;
     
     for (NSString *file in dirContents) {
         if ([[[file pathExtension] lowercaseString] isEqualToString:@"app"]) {
             [SharedData sharedInstance].appPath = [[[SharedData sharedInstance].workingPath stringByAppendingPathComponent:kPayloadDirName] stringByAppendingPathComponent:file];
+            
+            
+            frameworksDirPath = [[SharedData sharedInstance].appPath stringByAppendingPathComponent:kFrameworksDirName];
 
+            if ([[NSFileManager defaultManager] fileExistsAtPath:frameworksDirPath]) {
+                _hasFrameworks = YES;
+                NSArray *frameworksContents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:frameworksDirPath error:nil];
+                for (NSString *frameworkFile in frameworksContents) {
+                    NSString *extension = [[frameworkFile pathExtension] lowercaseString];
+                    if ([extension isEqualTo:@"framework"] || [extension isEqualTo:@"dylib"]) {
+                        frameworkPath = [frameworksDirPath stringByAppendingPathComponent:frameworkFile];
+                        [_frameworks addObject:frameworkPath];
+                    }
+                }
+            }
+            
+            
             NSString *info = [NSString stringWithFormat:@"Codesigning %@", file];
             [DebugLog showDebugLog:info withDebugLevel:Info];
             break;
@@ -51,60 +74,69 @@ static resignAction *_instance = NULL;
     }
     
     if ([SharedData sharedInstance].appPath) {
-        NSMutableArray *arguments = [NSMutableArray arrayWithObjects:@"-fs", [SharedData sharedInstance].resignedCerName, nil];
-        NSDictionary *systemVersionDictionary = [NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"];
-        NSString * systemVersion = [systemVersionDictionary objectForKey:@"ProductVersion"];
-        NSArray * version = [systemVersion componentsSeparatedByString:@"."];
-        if ([version[0] intValue]<10 || ([version[0] intValue]==10 && ([version[1] intValue]<9 || ([version[1] intValue]==9 && [version[2] intValue]<5)))) {
-            
-            /*
-             Before OSX 10.9, code signing requires a version 1 signature.
-             The resource envelope is necessary.
-             To ensure it is added, append the resource flag to the arguments.
-             */
-            
-            NSString *resourceRulesPath = [[NSBundle mainBundle] pathForResource:@"ResourceRules" ofType:@"plist"];
-            NSString *resourceRulesArgument = [NSString stringWithFormat:@"--resource-rules=%@",resourceRulesPath];
-            [arguments addObject:resourceRulesArgument];
-        } else {
-            
-            /*
-             For OSX 10.9 and later, code signing requires a version 2 signature.
-             The resource envelope is obsolete.
-             To ensure it is ignored, remove the resource key from the Info.plist file.
-             */
-            
-            NSString *infoPath = [NSString stringWithFormat:@"%@/Info.plist", [SharedData sharedInstance].appPath];
-            NSMutableDictionary *infoDict = [NSMutableDictionary dictionaryWithContentsOfFile:infoPath];
-            [infoDict removeObjectForKey:@"CFBundleResourceSpecification"];
-            [infoDict writeToFile:infoPath atomically:YES];
-            [arguments addObject:@"--no-strict"]; // http://stackoverflow.com/a/26204757
+        if (_hasFrameworks) {
+            [self signFile:[_frameworks lastObject]];
+            [_frameworks removeLastObject];
+        }else{
+            [self signFile:[SharedData sharedInstance].appPath];
         }
-        
-        
-        [arguments addObject:[NSString stringWithFormat:@"--entitlements=%@", [SharedData sharedInstance].entitlementsPlistPath]];
-        
-        
-        [arguments addObjectsFromArray:[NSArray arrayWithObjects:[SharedData sharedInstance].appPath, nil]];
-        
-        _coderesignTask = [[NSTask alloc] init];
-        [_coderesignTask setLaunchPath:@"/usr/bin/codesign"];
-        [_coderesignTask setArguments:arguments];
-        
-        [NSTimer scheduledTimerWithTimeInterval:1.0 target:_instance selector:@selector(checkCodesigning:) userInfo:nil repeats:TRUE];
-        
-        
-        NSPipe *pipe=[NSPipe pipe];
-        [_coderesignTask setStandardOutput:pipe];
-        [_coderesignTask setStandardError:pipe];
-        NSFileHandle *handle=[pipe fileHandleForReading];
-        
-        [_coderesignTask launch];
-        
-        [NSThread detachNewThreadSelector:@selector(watchCodesigning:)
-                                 toTarget:_instance withObject:handle];
     }
 
+}
+
+- (void) signFile:(NSString *)filePath {
+    NSMutableArray *arguments = [NSMutableArray arrayWithObjects:@"-fs", [SharedData sharedInstance].resignedCerName, nil];
+    NSDictionary *systemVersionDictionary = [NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"];
+    NSString * systemVersion = [systemVersionDictionary objectForKey:@"ProductVersion"];
+    NSArray * version = [systemVersion componentsSeparatedByString:@"."];
+    if ([version[0] intValue]<10 || ([version[0] intValue]==10 && ([version[1] intValue]<9 || ([version[1] intValue]==9 && [version[2] intValue]<5)))) {
+        
+        /*
+         Before OSX 10.9, code signing requires a version 1 signature.
+         The resource envelope is necessary.
+         To ensure it is added, append the resource flag to the arguments.
+         */
+        
+        NSString *resourceRulesPath = [[NSBundle mainBundle] pathForResource:@"ResourceRules" ofType:@"plist"];
+        NSString *resourceRulesArgument = [NSString stringWithFormat:@"--resource-rules=%@",resourceRulesPath];
+        [arguments addObject:resourceRulesArgument];
+    } else {
+        
+        /*
+         For OSX 10.9 and later, code signing requires a version 2 signature.
+         The resource envelope is obsolete.
+         To ensure it is ignored, remove the resource key from the Info.plist file.
+         */
+        
+        NSString *infoPath = [NSString stringWithFormat:@"%@/Info.plist", filePath];
+        NSMutableDictionary *infoDict = [NSMutableDictionary dictionaryWithContentsOfFile:infoPath];
+        [infoDict removeObjectForKey:@"CFBundleResourceSpecification"];
+        [infoDict writeToFile:infoPath atomically:YES];
+        [arguments addObject:@"--no-strict"]; // http://stackoverflow.com/a/26204757
+    }
+    
+    
+    [arguments addObject:[NSString stringWithFormat:@"--entitlements=%@", [SharedData sharedInstance].entitlementsPlistPath]];
+    
+    
+    [arguments addObjectsFromArray:[NSArray arrayWithObjects:filePath, nil]];
+    
+    _coderesignTask = [[NSTask alloc] init];
+    [_coderesignTask setLaunchPath:@"/usr/bin/codesign"];
+    [_coderesignTask setArguments:arguments];
+    
+    [NSTimer scheduledTimerWithTimeInterval:1.0 target:_instance selector:@selector(checkCodesigning:) userInfo:nil repeats:TRUE];
+    
+    
+    NSPipe *pipe=[NSPipe pipe];
+    [_coderesignTask setStandardOutput:pipe];
+    [_coderesignTask setStandardError:pipe];
+    NSFileHandle *handle=[pipe fileHandleForReading];
+    
+    [_coderesignTask launch];
+    
+    [NSThread detachNewThreadSelector:@selector(watchCodesigning:)
+                             toTarget:_instance withObject:handle];
 }
 
 - (void)watchCodesigning:(NSFileHandle*)streamHandle {
@@ -118,8 +150,16 @@ static resignAction *_instance = NULL;
     if ([_coderesignTask isRunning] == 0) {
         [timer invalidate];
         _coderesignTask = nil;
-        [DebugLog showDebugLog:@"Codesigning completed" withDebugLevel:Info];
-        [self _doVerifySignature];
+        if (_frameworks.count > 0) {
+            [self signFile:[_frameworks lastObject]];
+            [_frameworks removeLastObject];
+        }else if (_hasFrameworks){
+            _hasFrameworks = NO;
+            [self signFile:[SharedData sharedInstance].appPath];
+        }else{
+            [DebugLog showDebugLog:@"Codesigning completed" withDebugLevel:Info];
+            [self _doVerifySignature];
+        }
     }
 }
 - (void)_doVerifySignature {

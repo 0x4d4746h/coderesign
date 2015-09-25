@@ -81,8 +81,6 @@ static zipUtils *_instance = NULL;
     }
 }
 
-
-
 - (void)doUnZip {
     [DebugLog showDebugLog:@"############################################################################ unzip ipa..." withDebugLevel:Info];
     
