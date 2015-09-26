@@ -7,7 +7,12 @@
 * Xcode6.0+ with development tools
 
 # How to use
+#### code resign and decompress icon png.
 <pre>coderesign -d /you/ipa/path/xx.ipa -p your_distribution.mobileprovision -ci certificates_index -py your-python</pre>
+#### only code resign
+<pre>coderesign -d /you/ipa/path/xx.ipa -p your_distribution.mobileprovision -ci certificates_index</pre>
+#### only decompress icon png.
+<pre>coderesign -d /you/ipa/path/xx.ipa -py your-python</pre>
 
 # Support list:
 * Support decompress the icon file from ipa.
