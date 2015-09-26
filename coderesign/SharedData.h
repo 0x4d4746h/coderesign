@@ -49,6 +49,12 @@ typedef enum {
 @property (nonatomic, copy) NSString *tempPath;
 @property (nonatomic, copy) NSString *commandPath;
 @property (nonatomic, copy) NSString *entitlementsPlistPath;
+
+//the flag for different actions
+@property (nonatomic, assign) BOOL isOnlyDecodeIcon;
+@property (nonatomic, assign) BOOL isResignAndDecode;
+@property (nonatomic, assign) BOOL isOnlyResign;
+
 + (SharedData *) sharedInstance;
 
 @end

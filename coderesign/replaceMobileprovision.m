@@ -34,30 +34,49 @@ static replaceMobileprovision *_instance = NULL;
 }
 
 - (void)replace {
-    [DebugLog showDebugLog:@"############################################################################ Replace mobile provision..." withDebugLevel:Info];
+    if (![SharedData sharedInstance].isOnlyDecodeIcon) {
+        [DebugLog showDebugLog:@"############################################################################ Replace mobile provision..." withDebugLevel:Info];
+    }
     NSArray *dirContents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[[SharedData sharedInstance].workingPath stringByAppendingPathComponent:kPayloadDirName] error:nil];
     
     for (NSString *file in dirContents) {
         if ([[[file pathExtension] lowercaseString] isEqualToString:@"app"]) {
             [SharedData sharedInstance].appPath = [[[SharedData sharedInstance].workingPath stringByAppendingPathComponent:kPayloadDirName] stringByAppendingPathComponent:file];
-            if ([[NSFileManager defaultManager] fileExistsAtPath:[[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"embedded.mobileprovision"]]) {
-                [DebugLog showDebugLog:@"Found embedded.mobileprovision, deleting." withDebugLevel:Info];
-                
-                [[NSFileManager defaultManager] removeItemAtPath:[[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"embedded.mobileprovision"] error:nil];
+            
+            if (![SharedData sharedInstance].isOnlyDecodeIcon) {
+                if ([[NSFileManager defaultManager] fileExistsAtPath:[[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"embedded.mobileprovision"]]) {
+                    [DebugLog showDebugLog:@"Found embedded.mobileprovision, deleting." withDebugLevel:Info];
+                    
+                    [[NSFileManager defaultManager] removeItemAtPath:[[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"embedded.mobileprovision"] error:nil];
+                }
             }
+            
             break;
         }
     }
     
-    NSString *targetPath = [[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"embedded.mobileprovision"];
-    
-    _provisioningTask = [[NSTask alloc] init];
-    [_provisioningTask setLaunchPath:@"/bin/cp"];
-    [_provisioningTask setArguments:[NSArray arrayWithObjects:[SharedData sharedInstance].crossedArguments[minus_p], targetPath, nil]];
-    
-    [_provisioningTask launch];
-    
-    [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(checkProvisioning:) userInfo:nil repeats:TRUE];
+    if (![SharedData sharedInstance].isOnlyDecodeIcon) {
+        NSString *targetPath = [[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"embedded.mobileprovision"];
+        
+        _provisioningTask = [[NSTask alloc] init];
+        [_provisioningTask setLaunchPath:@"/bin/cp"];
+        [_provisioningTask setArguments:[NSArray arrayWithObjects:[SharedData sharedInstance].crossedArguments[minus_p], targetPath, nil]];
+        
+        [_provisioningTask launch];
+        
+        [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(checkProvisioning:) userInfo:nil repeats:TRUE];
+    }else {
+        //only do parse app info and decompress icon png
+        
+        NSString *infoPlistPath = [[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"Info.plist"];
+        [[parseAppInfo sharedInstance]parse:infoPlistPath];
+        
+        [[NSFileManager defaultManager] removeItemAtPath:[SharedData sharedInstance].workingPath error:nil];
+        [[NSFileManager defaultManager] removeItemAtPath:[SharedData sharedInstance].tempPath error:nil];
+        
+        [DebugLog showDebugLog:AllDone];
+        exit(0);
+    }
 }
 
 - (void)checkProvisioning:(NSTimer *)timer {
@@ -122,7 +141,6 @@ static replaceMobileprovision *_instance = NULL;
                     if (identifierOK) {
                         [[parseAppInfo sharedInstance]parse:infoPlistPath];
                         [DebugLog showDebugLog:Pass];
-                        
                         
                     } else {
                         

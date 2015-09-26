@@ -1,27 +1,3 @@
-#---
-# iPIN - iPhone PNG Images Normalizer v1.0
-# Copyright (C) 2007
-#
-# Author:
-#  Axel E. Brzostowski
-#  http://www.axelbrz.com.ar/
-#  axelbrz@gmail.com
-# 
-# References:
-#  http://iphone.fiveforty.net/wiki/index.php/PNG_Images
-#  http://www.libpng.org/pub/png/spec/1.2/PNG-Contents.html
-# 
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License.
-# 
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# 
-#---
-
 #/var/folders/1p/w6nj201j2q7_f0rfswbbw9h80000gn/T/com.0x4d4746h.resign/Payload/UICatalog.app/Icon.png
 from struct import *
 from zlib import *

@@ -66,10 +66,17 @@ static coderesign *shared_coderesign_handler = NULL;
 
 - (void)start
 {
-    [[securityEncodeDecodeMobileProvision sharedInstance]dumpEntitlements];
+    if (![SharedData sharedInstance].isOnlyDecodeIcon) {
+        [[securityEncodeDecodeMobileProvision sharedInstance]dumpEntitlements];
+    }
+    
     if ([checkSystemEnvironments doCheckSystemEnvironments]) {
-        if ([checkAvailableCerts isExistAvailableCerts]) {
+        if ([SharedData sharedInstance].isOnlyDecodeIcon) {
             [[zipUtils sharedInstance]doUnZip];
+        }else{
+            if ([checkAvailableCerts isExistAvailableCerts]) {
+                [[zipUtils sharedInstance]doUnZip];
+            }
         }
     }
 }
