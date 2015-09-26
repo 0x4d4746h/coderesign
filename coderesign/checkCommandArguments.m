@@ -79,7 +79,6 @@
                 }
                 exit(0);
             }
-
             
             if ([passed_command_flags_ containsObject:@"-py"]) {
                 NSString *py = [SharedData sharedInstance].crossedArguments[minus_py];
