@@ -11,6 +11,4 @@
 @interface securityEncodeDecodeMobileProvision : NSObject
 + (securityEncodeDecodeMobileProvision *)sharedInstance;
 - (void) dumpEntitlements;
-- (void) decode;
-- (void) encode;
 @end

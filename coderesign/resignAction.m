@@ -21,6 +21,7 @@
 
 @property (nonatomic, strong)NSMutableArray *frameworks;
 @property (nonatomic, assign) BOOL hasFrameworks;
+@property (nonatomic, assign) BOOL hasExtension;
 
 @end
 
@@ -42,18 +43,31 @@ static resignAction *_instance = NULL;
     [SharedData sharedInstance].appPath = nil;
     
     NSArray *dirContents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[[SharedData sharedInstance].workingPath stringByAppendingPathComponent:kPayloadDirName] error:nil];
+    
+    /*
+     * Just for swift frameworks
+     */
     NSString * frameworksDirPath = nil;
     _hasFrameworks = NO;
     _frameworks = [[NSMutableArray alloc]init];
     NSString *frameworkPath = nil;
     
+    
+    /*
+     * Just for extension app
+     */
+    _hasExtension = NO;
+    NSString *extensionPluginPath = nil;
+    
+    
     for (NSString *file in dirContents) {
         if ([[[file pathExtension] lowercaseString] isEqualToString:@"app"]) {
             [SharedData sharedInstance].appPath = [[[SharedData sharedInstance].workingPath stringByAppendingPathComponent:kPayloadDirName] stringByAppendingPathComponent:file];
             
-            
+            /**
+             * Resign the swift dylibs if exists these frameworks
+             */
             frameworksDirPath = [[SharedData sharedInstance].appPath stringByAppendingPathComponent:kFrameworksDirName];
-
             if ([[NSFileManager defaultManager] fileExistsAtPath:frameworksDirPath]) {
                 _hasFrameworks = YES;
                 NSArray *frameworksContents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:frameworksDirPath error:nil];
@@ -66,6 +80,23 @@ static resignAction *_instance = NULL;
                 }
             }
             
+            /*
+             *
+             */
+            extensionPluginPath = [[SharedData sharedInstance].appPath stringByAppendingPathComponent:kPlugIns];
+            if ([[NSFileManager defaultManager]fileExistsAtPath:extensionPluginPath]) {
+                _hasExtension = YES;
+                NSArray *_extensionFiles = [[NSFileManager defaultManager]contentsOfDirectoryAtPath:extensionPluginPath error:nil];
+                for (NSString *_extensionFile in _extensionFiles) {
+                    NSString *_extensionName = [[_extensionFile pathExtension]lowercaseString];
+                    if ([_extensionName isEqualToString:@"appex"]) {
+                        extensionPluginPath = [extensionPluginPath stringByAppendingPathComponent:_extensionFile];
+                        [SharedData sharedInstance].extensionPath = extensionPluginPath;
+                    }
+                }
+                
+            }
+            
             
             NSString *info = [NSString stringWithFormat:@"Codesigning %@", file];
             [DebugLog showDebugLog:info withDebugLevel:Info];
@@ -74,10 +105,15 @@ static resignAction *_instance = NULL;
     }
     
     if ([SharedData sharedInstance].appPath) {
+        
+        //resign swift framworks
         if (_hasFrameworks) {
             [self signFile:[_frameworks lastObject]];
             [_frameworks removeLastObject];
-        }else{
+        }else if(_hasExtension){
+            [self signFile:[SharedData sharedInstance].extensionPath];
+        }else {
+            //last resign app
             [self signFile:[SharedData sharedInstance].appPath];
         }
     }
@@ -115,9 +151,11 @@ static resignAction *_instance = NULL;
         [arguments addObject:@"--no-strict"]; // http://stackoverflow.com/a/26204757
     }
     
-    
-    [arguments addObject:[NSString stringWithFormat:@"--entitlements=%@", [SharedData sharedInstance].entitlementsPlistPath]];
-    
+    if (_hasExtension) {
+        [arguments addObject:[NSString stringWithFormat:@"--entitlements=%@", [SharedData sharedInstance].extensionAppEntitlementsPlistPath]];
+    }else {
+        [arguments addObject:[NSString stringWithFormat:@"--entitlements=%@", [SharedData sharedInstance].entitlementsPlistPath]];
+    }
     
     [arguments addObjectsFromArray:[NSArray arrayWithObjects:filePath, nil]];
     
@@ -141,47 +179,79 @@ static resignAction *_instance = NULL;
 
 - (void)watchCodesigning:(NSFileHandle*)streamHandle {
     @autoreleasepool {
-        
         _coderesignResult = [[NSString alloc] initWithData:[streamHandle readDataToEndOfFile] encoding:NSASCIIStringEncoding];
-        
     }
 }
 - (void)checkCodesigning:(NSTimer *)timer {
     if ([_coderesignTask isRunning] == 0) {
         [timer invalidate];
         _coderesignTask = nil;
+        
         if (_frameworks.count > 0) {
             [self signFile:[_frameworks lastObject]];
             [_frameworks removeLastObject];
         }else if (_hasFrameworks){
             _hasFrameworks = NO;
+            if (_hasExtension) {
+                [self signFile:[SharedData sharedInstance].extensionPath];
+                [self _doVerifySignature:kExtensionApp];
+                _hasExtension = NO;
+            }else {
+                [self signFile:[SharedData sharedInstance].appPath];
+            }
+        }else if (_hasExtension) {
+            _hasExtension = NO;
             [self signFile:[SharedData sharedInstance].appPath];
         }else{
             [DebugLog showDebugLog:@"Codesigning completed" withDebugLevel:Info];
-            [self _doVerifySignature];
+            [self _doVerifySignature:kMainApp];
         }
     }
 }
-- (void)_doVerifySignature {
-    if ([SharedData sharedInstance].appPath) {
-        _verifyTask = [[NSTask alloc] init];
-        [_verifyTask setLaunchPath:@"/usr/bin/codesign"];
-        [_verifyTask setArguments:[NSArray arrayWithObjects:@"-v", [SharedData sharedInstance].appPath, nil]];
-        
-        [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(checkVerificationProcess:) userInfo:nil repeats:TRUE];
-        
-        NSLog(@"Verifying %@",[SharedData sharedInstance].appPath);
-        
-        NSPipe *pipe=[NSPipe pipe];
-        [_verifyTask setStandardOutput:pipe];
-        [_verifyTask setStandardError:pipe];
-        NSFileHandle *handle=[pipe fileHandleForReading];
-        
-        [_verifyTask launch];
-        
-        [NSThread detachNewThreadSelector:@selector(watchVerificationProcess:)
-                                 toTarget:_instance withObject:handle];
+- (void)_doVerifySignature:(NSString *)appType {
+    if ([appType isEqualToString:kMainApp]) {
+        if ([SharedData sharedInstance].appPath) {
+            _verifyTask = [[NSTask alloc] init];
+            [_verifyTask setLaunchPath:@"/usr/bin/codesign"];
+            [_verifyTask setArguments:[NSArray arrayWithObjects:@"-v", [SharedData sharedInstance].appPath, nil]];
+            
+            [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(checkVerificationProcess:) userInfo:nil repeats:TRUE];
+            
+            NSLog(@"Verifying %@",[SharedData sharedInstance].appPath);
+            
+            NSPipe *pipe=[NSPipe pipe];
+            [_verifyTask setStandardOutput:pipe];
+            [_verifyTask setStandardError:pipe];
+            NSFileHandle *handle=[pipe fileHandleForReading];
+            
+            [_verifyTask launch];
+            
+            [NSThread detachNewThreadSelector:@selector(watchVerificationProcess:)
+                                     toTarget:_instance withObject:handle];
+        }
+    }else if ([appType isEqualToString:kExtensionApp]) {
+        if ([SharedData sharedInstance].extensionPath) {
+            _verifyTask = [[NSTask alloc] init];
+            [_verifyTask setLaunchPath:@"/usr/bin/codesign"];
+            [_verifyTask setArguments:[NSArray arrayWithObjects:@"-v", [SharedData sharedInstance].extensionPath, nil]];
+            
+            [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(checkVerificationProcess:) userInfo:nil repeats:TRUE];
+            
+            NSLog(@"Verifying %@",[SharedData sharedInstance].extensionPath);
+            
+            NSPipe *pipe=[NSPipe pipe];
+            [_verifyTask setStandardOutput:pipe];
+            [_verifyTask setStandardError:pipe];
+            NSFileHandle *handle=[pipe fileHandleForReading];
+            
+            [_verifyTask launch];
+            
+            [NSThread detachNewThreadSelector:@selector(watchVerificationProcess:)
+                                     toTarget:_instance withObject:handle];
+        }
     }
+    
+    
 }
 - (void)watchVerificationProcess:(NSFileHandle*)streamHandle {
     @autoreleasepool {

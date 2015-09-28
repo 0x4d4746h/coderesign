@@ -15,16 +15,6 @@
 + (BOOL)checkArguments:(const char *[])argv number:(int)argc
 {
     [DebugLog showDebugLog:@"############################################################################ Checking passed arguments..." withDebugLevel:Info];
-//    if (argc == 3) {
-//        
-//        [SharedData sharedInstance].isOnlyDecodeIcon = YES;
-//    }else if (argc < ([SharedData sharedInstance].standardCommands.count +1)) {
-//        // show the command's useage
-//
-//        [DebugLog showDebugLog:@"More or less arguments for codreesign, please confirm and retry!" withDebugLevel:Error];
-//        
-//        exit(0);
-//    }
     
     NSMutableArray *passed_command_flags_ = [NSMutableArray new];
     NSMutableArray *passed_values_ = [NSMutableArray new];
@@ -47,8 +37,6 @@
     
     //remove the coderesign path arguments
     [passed_values_ removeObjectAtIndex:0];
-//    NSLog(@"passed_command_flags_ > %@", passed_command_flags_);
-//    NSLog(@"passed_values_ > %@", passed_values_);
     if (passed_command_flags_.count != passed_values_.count) {
         [DebugLog showDebugLog:@"Missed arguments for options" withDebugLevel:Error];
         exit(0);

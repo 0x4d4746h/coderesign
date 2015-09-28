@@ -14,15 +14,17 @@ FOUNDATION_EXPORT NSString *const KCheckCPUNotification;
 
 FOUNDATION_EXPORT NSString *const minus_d;
 FOUNDATION_EXPORT NSString *const minus_p;
-//FOUNDATION_EXPORT NSString *const minus_e;
-//FOUNDATION_EXPORT NSString *const minus_id;
+FOUNDATION_EXPORT NSString *const minus_ex;
 FOUNDATION_EXPORT NSString *const minus_cer;
 FOUNDATION_EXPORT NSString *const minus_py;
 FOUNDATION_EXPORT NSString *const minus_h;
 
-//FOUNDATION_EXPORT NSString *const DISTRIBUTION;
 FOUNDATION_EXPORT NSString *const kPayloadDirName;
 FOUNDATION_EXPORT NSString *const kFrameworksDirName;
+FOUNDATION_EXPORT NSString *const kPlugIns;
+FOUNDATION_EXPORT NSString *const kMainApp;
+FOUNDATION_EXPORT NSString *const kExtensionApp;
+
 
 typedef enum {
     Replace_MobileProvision = 0,
@@ -50,10 +52,20 @@ typedef enum {
 @property (nonatomic, copy) NSString *commandPath;
 @property (nonatomic, copy) NSString *entitlementsPlistPath;
 
+
 //the flag for different actions
 @property (nonatomic, assign) BOOL isOnlyDecodeIcon;
 @property (nonatomic, assign) BOOL isResignAndDecode;
 @property (nonatomic, assign) BOOL isOnlyResign;
+
+@property (nonatomic, copy) NSString *extensionPath;
+
+@property (nonatomic, copy) NSString *archivedExpandedEntitlementsFilePath;
+
+@property (nonatomic, strong) NSArray *appGroups;
+@property (nonatomic, strong) NSArray *extensionAppGroups;
+@property (nonatomic, copy) NSString *extensionAppEntitlementsPlistPath;
+@property (nonatomic, copy) NSString *currentAppType;
 
 + (SharedData *) sharedInstance;
 

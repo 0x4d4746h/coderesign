@@ -43,11 +43,29 @@ static replaceMobileprovision *_instance = NULL;
         if ([[[file pathExtension] lowercaseString] isEqualToString:@"app"]) {
             [SharedData sharedInstance].appPath = [[[SharedData sharedInstance].workingPath stringByAppendingPathComponent:kPayloadDirName] stringByAppendingPathComponent:file];
             
+            NSString *extensionPluginPath = [[SharedData sharedInstance].appPath stringByAppendingPathComponent:kPlugIns];
+            if ([[NSFileManager defaultManager]fileExistsAtPath:extensionPluginPath]) {
+                NSArray *_extensionFiles = [[NSFileManager defaultManager]contentsOfDirectoryAtPath:extensionPluginPath error:nil];
+                for (NSString *_extensionFile in _extensionFiles) {
+                    NSString *_extensionName = [[_extensionFile pathExtension]lowercaseString];
+                    if ([_extensionName isEqualToString:@"appex"]) {
+                        extensionPluginPath = [extensionPluginPath stringByAppendingPathComponent:_extensionFile];
+                        [SharedData sharedInstance].extensionPath = extensionPluginPath;
+                    }
+                }
+                
+            }
+            
             if (![SharedData sharedInstance].isOnlyDecodeIcon) {
                 if ([[NSFileManager defaultManager] fileExistsAtPath:[[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"embedded.mobileprovision"]]) {
-                    [DebugLog showDebugLog:@"Found embedded.mobileprovision, deleting." withDebugLevel:Info];
+                    [DebugLog showDebugLog:@"Found embedded.mobileprovision in main app, deleting..." withDebugLevel:Info];
                     
                     [[NSFileManager defaultManager] removeItemAtPath:[[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"embedded.mobileprovision"] error:nil];
+                }
+                
+                if ([SharedData sharedInstance].extensionPath !=NULL && [[NSFileManager defaultManager]fileExistsAtPath:[[SharedData sharedInstance].extensionPath stringByAppendingPathComponent:@"embedded.mobileprovision"]]) {
+                    [DebugLog showDebugLog:@"Found embedded.mobileprovision in extension app, deleting..." withDebugLevel:Info];
+                    [[NSFileManager defaultManager] removeItemAtPath:[[SharedData sharedInstance].extensionPath stringByAppendingPathComponent:@"embedded.mobileprovision"] error:nil];
                 }
             }
             
@@ -55,16 +73,9 @@ static replaceMobileprovision *_instance = NULL;
         }
     }
     
+    
     if (![SharedData sharedInstance].isOnlyDecodeIcon) {
-        NSString *targetPath = [[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"embedded.mobileprovision"];
-        
-        _provisioningTask = [[NSTask alloc] init];
-        [_provisioningTask setLaunchPath:@"/bin/cp"];
-        [_provisioningTask setArguments:[NSArray arrayWithObjects:[SharedData sharedInstance].crossedArguments[minus_p], targetPath, nil]];
-        
-        [_provisioningTask launch];
-        
-        [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(checkProvisioning:) userInfo:nil repeats:TRUE];
+        [self _copyAndUpdateNewMobileProvisionFile:kMainApp];
     }else {
         //only do parse app info and decompress icon png
         
@@ -79,6 +90,32 @@ static replaceMobileprovision *_instance = NULL;
     }
 }
 
+- (void) _copyAndUpdateNewMobileProvisionFile:(NSString *)appType {
+    
+    _provisioningTask = [[NSTask alloc] init];
+    [_provisioningTask setLaunchPath:@"/bin/cp"];
+    
+    NSString *targetPath;
+    if ([appType isEqualToString:kMainApp]) {
+        targetPath = [[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"embedded.mobileprovision"];
+        [SharedData sharedInstance].currentAppType = kMainApp;
+        [_provisioningTask setArguments:[NSArray arrayWithObjects:[SharedData sharedInstance].crossedArguments[minus_p], targetPath, nil]];
+        
+    }else if ([appType isEqualToString:kExtensionApp]) {
+        targetPath = [[SharedData sharedInstance].extensionPath stringByAppendingPathComponent:@"embedded.mobileprovision"];
+        [SharedData sharedInstance].currentAppType = kExtensionApp;
+        [_provisioningTask setArguments:[NSArray arrayWithObjects:[SharedData sharedInstance].crossedArguments[minus_ex], targetPath, nil]];
+    }
+    
+    //if ([[NSFileManager defaultManager]fileExistsAtPath:targetPath]) {
+        [_provisioningTask launch];
+        
+        [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(checkProvisioning:) userInfo:nil repeats:TRUE];
+//    }else {
+//        [[NSNotificationCenter defaultCenter]postNotificationName:KCheckCPUNotification object:@(CPU_CHECK)];
+//    }
+}
+
 - (void)checkProvisioning:(NSTimer *)timer {
     if ([_provisioningTask isRunning] == 0) {
         [timer invalidate];
@@ -89,12 +126,27 @@ static replaceMobileprovision *_instance = NULL;
         for (NSString *file in dirContents) {
             if ([[[file pathExtension] lowercaseString] isEqualToString:@"app"]) {
                 [SharedData sharedInstance].appPath = [[[SharedData sharedInstance].workingPath stringByAppendingPathComponent:kPayloadDirName] stringByAppendingPathComponent:file];
-                if ([[NSFileManager defaultManager] fileExistsAtPath:[[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"embedded.mobileprovision"]]) {
+                
+                NSString *_mobileprovisionPath;
+                if ([[SharedData sharedInstance].currentAppType isEqualToString:kExtensionApp]) {
+                    _mobileprovisionPath = [[SharedData sharedInstance].extensionPath stringByAppendingPathComponent:@"embedded.mobileprovision"];
+                }else if ([[SharedData sharedInstance].currentAppType isEqualToString:kMainApp]) {
+                    _mobileprovisionPath =[[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"embedded.mobileprovision"];
+                }
+                
+                if ([[NSFileManager defaultManager] fileExistsAtPath:_mobileprovisionPath]) {
                     
                     BOOL identifierOK = FALSE;
                     NSString *identifierInProvisioning = @"";
                     
-                    NSString *embeddedProvisioning = [NSString stringWithContentsOfFile:[[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"embedded.mobileprovision"] encoding:NSASCIIStringEncoding error:nil];
+                    NSString *embeddedProvisioning;
+                    if ([[SharedData sharedInstance].currentAppType isEqualToString:kExtensionApp]) {
+                        embeddedProvisioning = [NSString stringWithContentsOfFile:[[SharedData sharedInstance].extensionPath stringByAppendingPathComponent:@"embedded.mobileprovision"] encoding:NSASCIIStringEncoding error:nil];
+                    }else if ([[SharedData sharedInstance].currentAppType isEqualToString:kMainApp]) {
+                        embeddedProvisioning = [NSString stringWithContentsOfFile:[[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"embedded.mobileprovision"] encoding:NSASCIIStringEncoding error:nil];
+                    }
+                    
+                    
                     NSArray* embeddedProvisioningLines = [embeddedProvisioning componentsSeparatedByCharactersInSet:
                                                           [NSCharacterSet newlineCharacterSet]];
                     
@@ -128,8 +180,13 @@ static replaceMobileprovision *_instance = NULL;
                     }
                     
                     NSLog(@"Mobileprovision identifier: %@",identifierInProvisioning);
+                    NSString *infoPlistPath;
+                    if ([[SharedData sharedInstance].currentAppType isEqualToString:kMainApp]) {
+                       infoPlistPath = [[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"Info.plist"];
+                    }else if ([[SharedData sharedInstance].currentAppType isEqualToString:kExtensionApp]) {
+                        infoPlistPath = [[SharedData sharedInstance].extensionPath stringByAppendingPathComponent:@"Info.plist"];
+                    }
                     
-                    NSString *infoPlistPath = [[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"Info.plist"];
                     NSMutableDictionary *infoPlistDic = [[NSMutableDictionary alloc]initWithContentsOfFile:infoPlistPath];
                     
                     NSString *infoPlist = [NSString stringWithContentsOfFile:infoPlistPath encoding:NSASCIIStringEncoding error:nil];
@@ -139,6 +196,7 @@ static replaceMobileprovision *_instance = NULL;
                     }
                     
                     if (identifierOK) {
+                        
                         [[parseAppInfo sharedInstance]parse:infoPlistPath];
                         [DebugLog showDebugLog:Pass];
                         
@@ -150,9 +208,26 @@ static replaceMobileprovision *_instance = NULL;
                         [[parseAppInfo sharedInstance]parse:infoPlistPath];
                     }
                     
-                    [[NSNotificationCenter defaultCenter]postNotificationName:KCheckCPUNotification object:@(CPU_CHECK)];
+                    //if need to update app group, then do it
+                    if ([SharedData sharedInstance].appGroups) {
+                        NSString *archivedExpandedEntitlementsPath = [[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"archived-expanded-entitlements.xcent"];
+                        NSMutableDictionary *_appgroupsDictionary = [[NSMutableDictionary alloc]initWithContentsOfFile:archivedExpandedEntitlementsPath];
+                        [_appgroupsDictionary setObject:[SharedData sharedInstance].appGroups forKey:@"com.apple.security.application-groups"];
+                        [_appgroupsDictionary writeToFile:archivedExpandedEntitlementsPath atomically:YES];
+                        [SharedData sharedInstance].appGroups = nil;
+                    }
+                    
+                    if ([[SharedData sharedInstance].currentAppType isEqualToString:kMainApp]) {
+                        [self _copyAndUpdateNewMobileProvisionFile:kExtensionApp];
+                        
+                         [[NSNotificationCenter defaultCenter]postNotificationName:KCheckCPUNotification object:@(CPU_CHECK)];
+                    }
+                   
                 }else {
-                    NSString * errorInfo = [NSString stringWithFormat:@"No embedded.mobileprovision file in %@", [SharedData sharedInstance].appPath];
+                    if ([[SharedData sharedInstance].currentAppType isEqualToString:kExtensionApp]) {
+                        return;
+                    }
+                    NSString * errorInfo = [NSString stringWithFormat:@"No embedded.mobileprovision file in %@", _mobileprovisionPath];
                     [DebugLog showDebugLog:errorInfo withDebugLevel:Error];
                     exit(0);
                 }
