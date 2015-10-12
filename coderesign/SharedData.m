@@ -8,13 +8,10 @@
 
 #import "SharedData.h"
 
-NSString *const KReplaceMobileProvisionNotification = @"key.replace.mobileProvision.notification";
-NSString *const KCodeResignNotification             = @"key.coderesign.notification";
-NSString *const KCheckCPUNotification               = @"key.checkCPU.notification";
-
 NSString *const minus_d     = @"-d";
 NSString *const minus_p     = @"-p";
 NSString *const minus_ex    = @"-ex";
+NSString *const minus_wp    = @"-wp";
 NSString *const minus_cer   = @"-ci";
 NSString *const minus_py    = @"-py";
 NSString *const minus_h     = @"-h";
@@ -22,9 +19,6 @@ NSString *const minus_h     = @"-h";
 NSString *const kPayloadDirName         = @"Payload";
 NSString *const kFrameworksDirName      = @"Frameworks";
 NSString *const kPlugIns                = @"PlugIns";
-
-NSString *const kMainApp        = @"main.app";
-NSString *const kExtensionApp   = @"extension.app";
 
 static SharedData *_instance = NULL;
 
@@ -36,8 +30,9 @@ static SharedData *_instance = NULL;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _instance = [[[self class]alloc]init];
-        _instance.standardCommands = @[minus_d, minus_p, minus_ex, minus_cer, minus_py];
+        _instance.standardCommands = @[minus_d, minus_p, minus_ex,minus_wp, minus_cer, minus_py];
         _instance.workingPath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"com.0x4d4746h.resign"];
+        _instance.swiftFrameworks = [[NSMutableArray alloc]init];
     });
     
     return _instance;

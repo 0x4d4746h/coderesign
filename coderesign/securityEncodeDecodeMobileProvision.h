@@ -7,8 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SharedData.h"
+
+typedef void(^finished)(BOOL isFinished, EntitlementsType type);
 
 @interface securityEncodeDecodeMobileProvision : NSObject
+
 + (securityEncodeDecodeMobileProvision *)sharedInstance;
-- (void) dumpEntitlements;
+
+- (void) dumpEntitlementsFromMobileProvision:(NSString *)mobileProvisionFilePath withEntitlementsType:(EntitlementsType) entitlementsType withBlock:(finished) finishedBlock;
+
 @end

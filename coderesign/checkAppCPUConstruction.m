@@ -14,12 +14,27 @@
 
 @property (nonatomic, strong) NSTask *cpuCheckerTask;
 @property (nonatomic, copy) NSString *verificationResult;
+@property (nonatomic, copy) CheckCPUFinishedBlock checkCPUFinishedBlock;
 @end
+
+static checkAppCPUConstruction *_instance = NULL;
 
 @implementation checkAppCPUConstruction
 
-- (void)check
++ (checkAppCPUConstruction *)sharedInstance
 {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _instance = [[[self class]alloc]init];
+    });
+    
+    return _instance;
+}
+
+- (void)checkWithFinishedBlock:(CheckCPUFinishedBlock)finishedBlock
+{
+    _checkCPUFinishedBlock = finishedBlock;
+    
     [DebugLog showDebugLog:@"checking CPU construction for this app" withDebugLevel:Info];
     if ([SharedData sharedInstance].appPath) {
         _cpuCheckerTask = [[NSTask alloc] init];
@@ -64,7 +79,8 @@
         }
         NSString *_result = [@"Support CPU type: <CPU>" stringByAppendingFormat:@"%@</CPU>", _cpuType];
         [DebugLog showDebugLog:_result withDebugLevel:Info];
-        [[NSNotificationCenter defaultCenter]postNotificationName:KCodeResignNotification object:@(Code_Resign)];
+        
+        _checkCPUFinishedBlock(TRUE);
     }
 }
 

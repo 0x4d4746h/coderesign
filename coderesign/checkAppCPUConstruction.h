@@ -8,7 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
+typedef void(^CheckCPUFinishedBlock)(BOOL isFinished);
+
 @interface checkAppCPUConstruction : NSObject
 
-- (void) check;
++ (checkAppCPUConstruction *) sharedInstance;
+
+- (void) checkWithFinishedBlock:(CheckCPUFinishedBlock) finishedBlock;
 @end

@@ -7,10 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SharedData.h"
 
 @interface parseAppInfo : NSObject
 
 + (parseAppInfo *) sharedInstance;
 
-- (void) parse:(NSString *)infoPlistPath;
+- (void) parse:(NSString *)infoPlistPath withAppType:(AppType) type;
+- (void) modifyWatchKitExtensionInfoPlistForNSExtension;
+- (void)modifyWatchKitAppCompanionID;
 @end

@@ -11,6 +11,8 @@
 #import "SharedData.h"
 #import "zipUtils.h"
 
+typedef void(^SignFinishedBlock)(BOOL isFinished);
+
 @interface resignAction ()
 
 @property (nonatomic, strong) NSTask *coderesignTask;
@@ -19,9 +21,12 @@
 @property (nonatomic, copy) NSString *coderesignResult;
 @property (nonatomic, copy) NSString *verificationResult;
 
-@property (nonatomic, strong)NSMutableArray *frameworks;
-@property (nonatomic, assign) BOOL hasFrameworks;
-@property (nonatomic, assign) BOOL hasExtension;
+//@property (nonatomic, strong)NSMutableArray *frameworks;
+//@property (nonatomic, assign) BOOL hasFrameworks;
+//@property (nonatomic, assign) BOOL hasExtension;
+
+@property (nonatomic, copy) SignFinishedBlock signFinishedBlock;
+@property (nonatomic, assign) AppType currentAppType;
 
 @end
 
@@ -40,88 +45,164 @@ static resignAction *_instance = NULL;
 
 - (void)resign {
     [DebugLog showDebugLog:@"############################################################################ Coderesign..." withDebugLevel:Info];
-    [SharedData sharedInstance].appPath = nil;
-    
-    NSArray *dirContents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[[SharedData sharedInstance].workingPath stringByAppendingPathComponent:kPayloadDirName] error:nil];
-    
-    /*
-     * Just for swift frameworks
-     */
-    NSString * frameworksDirPath = nil;
-    _hasFrameworks = NO;
-    _frameworks = [[NSMutableArray alloc]init];
-    NSString *frameworkPath = nil;
     
     
-    /*
-     * Just for extension app
-     */
-    _hasExtension = NO;
-    NSString *extensionPluginPath = nil;
-    
-    
-    for (NSString *file in dirContents) {
-        if ([[[file pathExtension] lowercaseString] isEqualToString:@"app"]) {
-            [SharedData sharedInstance].appPath = [[[SharedData sharedInstance].workingPath stringByAppendingPathComponent:kPayloadDirName] stringByAppendingPathComponent:file];
-            
-            /**
-             * Resign the swift dylibs if exists these frameworks
-             */
-            frameworksDirPath = [[SharedData sharedInstance].appPath stringByAppendingPathComponent:kFrameworksDirName];
-            if ([[NSFileManager defaultManager] fileExistsAtPath:frameworksDirPath]) {
-                _hasFrameworks = YES;
-                NSArray *frameworksContents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:frameworksDirPath error:nil];
-                for (NSString *frameworkFile in frameworksContents) {
-                    NSString *extension = [[frameworkFile pathExtension] lowercaseString];
-                    if ([extension isEqualTo:@"framework"] || [extension isEqualTo:@"dylib"]) {
-                        frameworkPath = [frameworksDirPath stringByAppendingPathComponent:frameworkFile];
-                        [_frameworks addObject:frameworkPath];
-                    }
-                }
-            }
-            
-            /*
-             *
-             */
-            extensionPluginPath = [[SharedData sharedInstance].appPath stringByAppendingPathComponent:kPlugIns];
-            if ([[NSFileManager defaultManager]fileExistsAtPath:extensionPluginPath]) {
-                _hasExtension = YES;
-                NSArray *_extensionFiles = [[NSFileManager defaultManager]contentsOfDirectoryAtPath:extensionPluginPath error:nil];
-                for (NSString *_extensionFile in _extensionFiles) {
-                    NSString *_extensionName = [[_extensionFile pathExtension]lowercaseString];
-                    if ([_extensionName isEqualToString:@"appex"]) {
-                        extensionPluginPath = [extensionPluginPath stringByAppendingPathComponent:_extensionFile];
-                        [SharedData sharedInstance].extensionPath = extensionPluginPath;
-                    }
-                }
-                
-            }
-            
-            
-            NSString *info = [NSString stringWithFormat:@"Codesigning %@", file];
-            [DebugLog showDebugLog:info withDebugLevel:Info];
-            break;
-        }
-    }
-    
-    if ([SharedData sharedInstance].appPath) {
+    if ([SharedData sharedInstance].isSupportWatchKitApp) {
+        _currentAppType = WatchApp;
         
-        //resign swift framworks
-        if (_hasFrameworks) {
-            [self signFile:[_frameworks lastObject]];
-            [_frameworks removeLastObject];
-        }else if(_hasExtension){
-            [self signFile:[SharedData sharedInstance].extensionPath];
-        }else {
-            //last resign app
-            [self signFile:[SharedData sharedInstance].appPath];
+        [self signFile:[SharedData sharedInstance].watchKitAppPath withAppType:WatchApp withFinishedBlock:^(BOOL isFinished) {
+            if (isFinished) {
+                if ([SharedData sharedInstance].isSupportWatchKitExtension) {
+                    _currentAppType = WatchApp;
+                    
+                    [self signFile:[SharedData sharedInstance].watchKitExtensionPath withAppType:Extension withFinishedBlock:^(BOOL isFinished) {
+                        if (isFinished) {
+                            /**
+                             * Sign swift frameworks if exists
+                             */
+                            if ([SharedData sharedInstance].isSupportSwift) {
+                                _currentAppType = Swift;
+                                [self signSwiftFrameworksSyncWithBlock:^(BOOL isFinished) {
+                                    if (isFinished) {
+                                        [self signFile:[SharedData sharedInstance].appPath withAppType:MainApp withFinishedBlock:^(BOOL isFinished) {
+                                            [self _doZip];
+                                        }];
+                                    }
+                                }];
+                            }else{
+                                [self signFile:[SharedData sharedInstance].appPath withAppType:MainApp withFinishedBlock:^(BOOL isFinished) {
+                                    [self _doZip];
+                                }];
+                            }
+                        }
+                    }];
+                }
+            }
+        }];
+        
+    }else{
+        /**
+         * Sign swift frameworks if exists
+         */
+        if ([SharedData sharedInstance].isSupportSwift) {
+            _currentAppType = Swift;
+            [self signSwiftFrameworksSyncWithBlock:^(BOOL isFinished) {
+                if (isFinished) {
+                    [self signFile:[SharedData sharedInstance].appPath withAppType:MainApp withFinishedBlock:^(BOOL isFinished) {
+                        [self _doZip];
+                    }];
+                }
+            }];
+        }else{
+            [self signFile:[SharedData sharedInstance].appPath withAppType:MainApp withFinishedBlock:^(BOOL isFinished) {
+                [self _doZip];
+            }];
         }
     }
-
+    
+//    dispatch_sync(cocurrentQueue, ^{
+//        [self signFile:[SharedData sharedInstance].appPath withAppType:MainApp withFinishedBlock:^(BOOL isFinished) {
+//            [self _doZip];
+//        }];
+//    });
+    
+        
+//    }
+    
+    
+    /**
+     * Sign watch kit app if support.
+     */
+//    if ([SharedData sharedInstance].isSupportWatchKitApp) {
+//        _currentAppType = WatchApp;
+//        
+//        [self signFile:[SharedData sharedInstance].watchKitAppPath withAppType:WatchApp withFinishedBlock:^(BOOL isFinished) {
+//            if (isFinished) {
+//                dispatch_group_leave(resignGroup);
+//            }
+//        }];
+//    }else {
+//        dispatch_group_leave(resignGroup);
+//    }
+//    
+//    dispatch_group_enter(resignGroup);
+//    //sign watch kit extension
+//    if ([SharedData sharedInstance].isSupportWatchKitExtension) {
+//        _currentAppType = Extension;
+//        
+//        [self signFile:[SharedData sharedInstance].watchKitExtensionPath withAppType:Extension withFinishedBlock:^(BOOL isFinished) {
+//            if (isFinished) {
+//                dispatch_group_leave(resignGroup);
+//            }
+//        }];
+//    }else{
+//        dispatch_group_leave(resignGroup);
+//    }
+//    
+//    dispatch_group_enter(resignGroup);
+//    /**
+//     * Sign swift frameworks if exists
+//     */
+//    if ([SharedData sharedInstance].isSupportSwift) {
+//        _currentAppType = Swift;
+//        [self signSwiftFrameworksSyncWithBlock:^(BOOL isFinished) {
+//            dispatch_group_leave(resignGroup);
+//        }];
+//    }else{
+//        dispatch_group_leave(resignGroup);
+//    }
+//    
+//    dispatch_group_notify(resignGroup, dispatch_get_main_queue(), ^{
+//       [self signFile:[SharedData sharedInstance].appPath withAppType:MainApp withFinishedBlock:^(BOOL isFinished) {
+//           [self _doZip];
+//       }];
+//    });
 }
 
-- (void) signFile:(NSString *)filePath {
+
+- (void) signSwiftFrameworksSyncWithBlock:(void(^)(BOOL isFinished)) finishedBlock {
+    dispatch_group_t swiftSignGroup = dispatch_group_create();
+    NSUInteger _count = [SharedData sharedInstance].swiftFrameworks.count;
+    
+    for (NSUInteger index=0; index<_count; index++) {
+        dispatch_group_enter(swiftSignGroup);
+        
+        NSString *_swift_frame_file_path = [[SharedData sharedInstance].swiftFrameworks objectAtIndex:index];
+        
+        [self signFile:_swift_frame_file_path withAppType:Swift withFinishedBlock:^(BOOL isFinished) {
+            if (isFinished) {
+                dispatch_group_leave(swiftSignGroup);
+            }
+        }];
+    }
+    
+    dispatch_group_notify(swiftSignGroup, dispatch_get_main_queue(), ^{
+        [[SharedData sharedInstance].swiftFrameworks removeAllObjects];
+        [SharedData sharedInstance].swiftFrameworks = nil;
+        finishedBlock (TRUE);
+    });
+}
+
+
+- (void) signFile:(NSString *)filePath withAppType:(AppType)type withFinishedBlock:(SignFinishedBlock) finishedBlock
+{
+    
+    _signFinishedBlock = finishedBlock;
+    NSString *_resignFilePath = [@"Start to sign file: " stringByAppendingFormat:@"%@", filePath];
+    [DebugLog showDebugLog:_resignFilePath withDebugLevel:Info];
+    
     NSMutableArray *arguments = [NSMutableArray arrayWithObjects:@"-fs", [SharedData sharedInstance].resignedCerName, nil];
+    
+    if (type == MainApp) {
+        [arguments addObject:[NSString stringWithFormat:@"--entitlements=%@", [SharedData sharedInstance].normalEntitlementsPlistPath]];
+    }else if (type == Swift){
+        [arguments addObject:[NSString stringWithFormat:@"--entitlements=%@", [SharedData sharedInstance].normalEntitlementsPlistPath]];
+    }else if(type == Extension){
+        [arguments addObject:[NSString stringWithFormat:@"--entitlements=%@", [SharedData sharedInstance].watchKitExtensionEntitlementsPlistPath]];
+    }else if (type == WatchApp) {
+        [arguments addObject:[NSString stringWithFormat:@"--entitlements=%@", [SharedData sharedInstance].watchKitAppEntitlementsPlistPath]];
+    }
+    
     NSDictionary *systemVersionDictionary = [NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"];
     NSString * systemVersion = [systemVersionDictionary objectForKey:@"ProductVersion"];
     NSArray * version = [systemVersion componentsSeparatedByString:@"."];
@@ -149,12 +230,6 @@ static resignAction *_instance = NULL;
         [infoDict removeObjectForKey:@"CFBundleResourceSpecification"];
         [infoDict writeToFile:infoPath atomically:YES];
         [arguments addObject:@"--no-strict"]; // http://stackoverflow.com/a/26204757
-    }
-    
-    if (_hasExtension) {
-        [arguments addObject:[NSString stringWithFormat:@"--entitlements=%@", [SharedData sharedInstance].extensionAppEntitlementsPlistPath]];
-    }else {
-        [arguments addObject:[NSString stringWithFormat:@"--entitlements=%@", [SharedData sharedInstance].entitlementsPlistPath]];
     }
     
     [arguments addObjectsFromArray:[NSArray arrayWithObjects:filePath, nil]];
@@ -186,78 +261,46 @@ static resignAction *_instance = NULL;
     if ([_coderesignTask isRunning] == 0) {
         [timer invalidate];
         _coderesignTask = nil;
-        
-        if (_frameworks.count > 0) {
-            [self signFile:[_frameworks lastObject]];
-            [_frameworks removeLastObject];
-        }else if (_hasFrameworks){
-            _hasFrameworks = NO;
-            if (_hasExtension) {
-                [self signFile:[SharedData sharedInstance].extensionPath];
-                [self _doVerifySignature:kExtensionApp];
-                _hasExtension = NO;
-            }else {
-                [self signFile:[SharedData sharedInstance].appPath];
-            }
-        }else if (_hasExtension) {
-            _hasExtension = NO;
-            [self signFile:[SharedData sharedInstance].appPath];
-        }else{
-            [DebugLog showDebugLog:@"Codesigning completed" withDebugLevel:Info];
-            [self _doVerifySignature:kMainApp];
-        }
+        [DebugLog showDebugLog:@"Codesigning completed" withDebugLevel:Info];
+        [self _doVerifySignature];
     }
 }
-- (void)_doVerifySignature:(NSString *)appType {
-    if ([appType isEqualToString:kMainApp]) {
-        if ([SharedData sharedInstance].appPath) {
-            _verifyTask = [[NSTask alloc] init];
-            [_verifyTask setLaunchPath:@"/usr/bin/codesign"];
-            [_verifyTask setArguments:[NSArray arrayWithObjects:@"-v", [SharedData sharedInstance].appPath, nil]];
-            
-            [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(checkVerificationProcess:) userInfo:nil repeats:TRUE];
-            
-            NSLog(@"Verifying %@",[SharedData sharedInstance].appPath);
-            
-            NSPipe *pipe=[NSPipe pipe];
-            [_verifyTask setStandardOutput:pipe];
-            [_verifyTask setStandardError:pipe];
-            NSFileHandle *handle=[pipe fileHandleForReading];
-            
-            [_verifyTask launch];
-            
-            [NSThread detachNewThreadSelector:@selector(watchVerificationProcess:)
-                                     toTarget:_instance withObject:handle];
-        }
-    }else if ([appType isEqualToString:kExtensionApp]) {
-        if ([SharedData sharedInstance].extensionPath) {
-            _verifyTask = [[NSTask alloc] init];
-            [_verifyTask setLaunchPath:@"/usr/bin/codesign"];
-            [_verifyTask setArguments:[NSArray arrayWithObjects:@"-v", [SharedData sharedInstance].extensionPath, nil]];
-            
-            [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(checkVerificationProcess:) userInfo:nil repeats:TRUE];
-            
-            NSLog(@"Verifying %@",[SharedData sharedInstance].extensionPath);
-            
-            NSPipe *pipe=[NSPipe pipe];
-            [_verifyTask setStandardOutput:pipe];
-            [_verifyTask setStandardError:pipe];
-            NSFileHandle *handle=[pipe fileHandleForReading];
-            
-            [_verifyTask launch];
-            
-            [NSThread detachNewThreadSelector:@selector(watchVerificationProcess:)
-                                     toTarget:_instance withObject:handle];
-        }
+- (void)_doVerifySignature {
+    if (_currentAppType == Swift) {
+        _signFinishedBlock (TRUE);
+        return;
     }
     
+    _verifyTask = [[NSTask alloc] init];
+    [_verifyTask setLaunchPath:@"/usr/bin/codesign"];
+    
+    if (_currentAppType == MainApp) {
+        [_verifyTask setArguments:[NSArray arrayWithObjects:@"-v", [SharedData sharedInstance].appPath, nil]];
+        NSLog(@"Verifying %@",[SharedData sharedInstance].appPath);
+    }else if (_currentAppType == Extension) {
+        [_verifyTask setArguments:[NSArray arrayWithObjects:@"-v", [SharedData sharedInstance].watchKitExtensionPath, nil]];
+        NSLog(@"Verifying %@",[SharedData sharedInstance].watchKitExtensionPath);
+    }else if (_currentAppType == WatchApp) {
+        [_verifyTask setArguments:[NSArray arrayWithObjects:@"-v", [SharedData sharedInstance].watchKitAppPath, nil]];
+        NSLog(@"Verifying %@",[SharedData sharedInstance].watchKitAppPath);
+    }
+    
+    [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(checkVerificationProcess:) userInfo:nil repeats:TRUE];
+    
+    NSPipe *pipe=[NSPipe pipe];
+    [_verifyTask setStandardOutput:pipe];
+    [_verifyTask setStandardError:pipe];
+    NSFileHandle *handle=[pipe fileHandleForReading];
+    
+    [_verifyTask launch];
+    
+    [NSThread detachNewThreadSelector:@selector(watchVerificationProcess:)
+                             toTarget:_instance withObject:handle];
     
 }
 - (void)watchVerificationProcess:(NSFileHandle*)streamHandle {
     @autoreleasepool {
-        
         _verificationResult = [[NSString alloc] initWithData:[streamHandle readDataToEndOfFile] encoding:NSASCIIStringEncoding];
-        
     }
 }
 - (void)checkVerificationProcess:(NSTimer *)timer {
@@ -265,16 +308,31 @@ static resignAction *_instance = NULL;
         [timer invalidate];
         _verifyTask = nil;
         if ([_verificationResult length] == 0) {
-            [DebugLog showDebugLog:Pass];
+            [DebugLog showDebugLog:@"Verifying resigned package success. [Pass]" withDebugLevel:Info];
             
-            [[zipUtils sharedInstance]doZip];
+            _signFinishedBlock (TRUE);
+            
         } else {
             NSString *error = [[_coderesignResult stringByAppendingString:@"\n\n"] stringByAppendingString:_verificationResult];
             NSString *info = [NSString stringWithFormat:@"Signing failed: %@ ", error ];
             [DebugLog showDebugLog:info withDebugLevel:Error];
+            _signFinishedBlock (FALSE);
             exit(0);
         }
     }
+}
+
+- (void) _doZip {
+    [DebugLog showDebugLog:Pass];
+    [[zipUtils sharedInstance]doZipWithFinishedBlock:^(BOOL isFinished) {
+        if (isFinished) {
+            [[NSFileManager defaultManager] removeItemAtPath:[SharedData sharedInstance].workingPath error:nil];
+            [[NSFileManager defaultManager] removeItemAtPath:[SharedData sharedInstance].tempPath error:nil];
+            [DebugLog showDebugLog:@"coderesign successful" withDebugLevel:Info];
+            [DebugLog showDebugLog:AllDone];
+            exit(0);
+        }
+    }];
 }
 
 @end

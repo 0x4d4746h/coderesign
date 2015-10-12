@@ -8,19 +8,21 @@
 
 #import "securityEncodeDecodeMobileProvision.h"
 #import "SharedData.h"
-#import  "DebugLog.h"
+#import "DebugLog.h"
 
 
 @interface securityEncodeDecodeMobileProvision ()
 
 @property (nonatomic, strong) NSTask * securityTask;
 @property (nonatomic, copy) NSString *stream;
-@property (nonatomic, strong) NSDictionary *entitlements;
-@property (nonatomic, assign) BOOL isDumpExtension;
+
+@property (nonatomic, assign) EntitlementsType entitlementsType;
+@property (nonatomic, copy) finished finishedBlock;
 
 @end
 
 static securityEncodeDecodeMobileProvision *_instance = NULL;
+
 @implementation securityEncodeDecodeMobileProvision
 
 + (securityEncodeDecodeMobileProvision *)sharedInstance
@@ -32,15 +34,16 @@ static securityEncodeDecodeMobileProvision *_instance = NULL;
     return _instance;
 }
 
-- (void)dumpEntitlements
+- (void)dumpEntitlementsFromMobileProvision:(NSString *)mobileProvisionFilePath withEntitlementsType:(EntitlementsType)entitlementsType withBlock:(finished)finishedBlock
 {
-
-    NSString *mobileprovisionPath = [SharedData sharedInstance].crossedArguments[minus_p];
-   
-    if (mobileprovisionPath !=NULL) {
-        [self _dump:mobileprovisionPath];
-    }
+    _entitlementsType = entitlementsType;
+    _finishedBlock = finishedBlock;
     
+    if (mobileProvisionFilePath !=NULL) {
+        [self _dump:mobileProvisionFilePath];
+    }else{
+        _finishedBlock (FALSE, entitlementsType);
+    }
 }
 
 - (void) _dump:(NSString *)mobileprovisionPath {
@@ -73,59 +76,56 @@ static securityEncodeDecodeMobileProvision *_instance = NULL;
     }
     
     [self _createEntitlementsFiles];
-    
-    if (_isDumpExtension) {
-        _isDumpExtension = NO;
-        return;
-    }
-    
-     NSString *extensionMobileprovisionPath = [SharedData sharedInstance].crossedArguments[minus_ex];
-    if (extensionMobileprovisionPath != NULL) {
-        _isDumpExtension = YES;
-        [self _dump:extensionMobileprovisionPath];
-    }
 }
 
 - (void) _createEntitlementsFiles {
     NSData *plistData = [_stream dataUsingEncoding:NSUTF8StringEncoding];
-    
-    NSString *_fileName = @"decodeMobileProvision";
-    if (_isDumpExtension) {
-        _fileName = [_fileName stringByAppendingString:@"_extension.plist"];
-    }else{
-        _fileName = [_fileName stringByAppendingString:@".plist"];
-    }
+    NSString *_fileName = [self _getFilePathWithPrefix:@"decodeMobileProvision"];
     NSString *_path = [[SharedData sharedInstance].tempPath stringByAppendingPathComponent:_fileName];
     
     [plistData writeToFile: _path atomically:YES];
     
     NSDictionary *dic = [[NSDictionary alloc]initWithContentsOfFile:_path];
     if (dic != nil) {
-        _entitlements = [dic objectForKey:@"Entitlements"];
-        if (_entitlements != nil) {
+        NSDictionary *entitlements = [dic objectForKey:@"Entitlements"];
+        if (entitlements != nil) {
             //write to entitlements.plist
             
-            NSString *_entitlementFileName = @"entitlements";
-            if (_isDumpExtension) {
-                _entitlementFileName = [_entitlementFileName stringByAppendingString:@"_extension.plist"];
-            }else {
-                _entitlementFileName = [_entitlementFileName stringByAppendingString:@".plist"];
-            }
-            
+            NSString *_entitlementFileName = [self _getFilePathWithPrefix:@"entitlements"];
+
             NSString * entitlementsPlistPath = [[SharedData sharedInstance].tempPath stringByAppendingPathComponent:_entitlementFileName];
-            [_entitlements writeToFile:entitlementsPlistPath atomically:YES];
+            [entitlements writeToFile:entitlementsPlistPath atomically:YES];
             
-            
-            if (_isDumpExtension) {
-                [SharedData sharedInstance].extensionAppEntitlementsPlistPath = entitlementsPlistPath;
-                [SharedData sharedInstance].extensionAppGroups = [_entitlements objectForKey:@"com.apple.security.application-groups"];
-            }else {
-                [SharedData sharedInstance].entitlementsPlistPath = entitlementsPlistPath;
-                [SharedData sharedInstance].appGroups = [_entitlements objectForKey:@"com.apple.security.application-groups"];
+            if (_entitlementsType == Normal) {
+                
+                [SharedData sharedInstance].normalEntitlementsPlistPath = entitlementsPlistPath;
+
+                _finishedBlock(TRUE, Normal);
+            }else if (_entitlementsType == WatchKitExtension) {
+                
+                [SharedData sharedInstance].watchKitExtensionEntitlementsPlistPath = entitlementsPlistPath;
+                
+                _finishedBlock(TRUE, WatchKitExtension);
+                
+            }else if (_entitlementsType == WatchKitApp){
+                
+                [SharedData sharedInstance].watchKitAppEntitlementsPlistPath = entitlementsPlistPath;
+                
+                _finishedBlock(TRUE, WatchKitApp);
             }
-            
         }
     }
 }
 
+- (NSString *) _getFilePathWithPrefix:(NSString *)filePrefix {
+    
+    if (_entitlementsType == Normal) {
+        filePrefix = [filePrefix stringByAppendingString:@".plist"];
+    }else if (_entitlementsType == WatchKitExtension) {
+        filePrefix = [filePrefix stringByAppendingString:@"_watchkitextension.plist"];
+    }else if (_entitlementsType == WatchKitApp){
+        filePrefix = [filePrefix stringByAppendingString:@"_watchkitapp.plist"];
+    }
+    return filePrefix;
+}
 @end

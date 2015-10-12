@@ -17,6 +17,9 @@
 @property (nonatomic, strong) NSTask *zipTask;
 @property (nonatomic, copy) NSString *fileName;
 
+@property (nonatomic, copy)ZipFinished zipFinishedBlock;
+@property (nonatomic, copy)UnzipFinished unzipFinishedBlock;
+
 @end
 
 static zipUtils *_instance = NULL;
@@ -32,9 +35,13 @@ static zipUtils *_instance = NULL;
     return _instance;
 }
 
-
-- (void)doZip
+/**
+ * Zip Action
+ */
+- (void)doZipWithFinishedBlock:(ZipFinished)finishedBlock
 {
+    _zipFinishedBlock = finishedBlock;
+    
     if ([SharedData sharedInstance].appPath) {
         NSString *sourcePath = [SharedData sharedInstance].crossedArguments[minus_d];
         NSArray *destinationPathComponents = [sourcePath pathComponents];
@@ -73,16 +80,19 @@ static zipUtils *_instance = NULL;
         
         NSString *savedFile = [NSString stringWithFormat:@"Zipping done, file name is %@",_fileName];
         [DebugLog showDebugLog:savedFile withDebugLevel:Info];
-        [[NSFileManager defaultManager] removeItemAtPath:[SharedData sharedInstance].workingPath error:nil];
-        [[NSFileManager defaultManager] removeItemAtPath:[SharedData sharedInstance].tempPath error:nil];
-        [DebugLog showDebugLog:@"coderesign successful" withDebugLevel:Info];
-        [DebugLog showDebugLog:AllDone];
-        exit(0);
+        
+        _zipFinishedBlock(TRUE);
     }
 }
 
-- (void)doUnZip {
+/**
+ *
+ * Unzip Action
+ */
+- (void)doUnZipWithFinishedBlock:(UnzipFinished)finishedBlock {
     [DebugLog showDebugLog:@"############################################################################ unzip ipa..." withDebugLevel:Info];
+    
+    _unzipFinishedBlock = finishedBlock;
     
     NSString *unzippath = [@"unzip ipa to " stringByAppendingString:[SharedData sharedInstance].workingPath];
     [DebugLog showDebugLog:unzippath withDebugLevel:Info];
@@ -104,11 +114,11 @@ static zipUtils *_instance = NULL;
         if ([[NSFileManager defaultManager] fileExistsAtPath:[[SharedData sharedInstance].workingPath stringByAppendingPathComponent:kPayloadDirName]]) {
             [DebugLog showDebugLog:Pass];
             
-            [[NSNotificationCenter defaultCenter]postNotificationName:KReplaceMobileProvisionNotification object:@(Replace_MobileProvision)];
+            _unzipFinishedBlock (TRUE);
             
         } else {
             [DebugLog showDebugLog:@"Unzip Failed" withDebugLevel:Error];
-            exit(0);
+            _unzipFinishedBlock(FALSE);
         }
     }
 }

@@ -8,13 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
-FOUNDATION_EXTERN NSString *const KReplaceMobileProvisionNotification;
-FOUNDATION_EXTERN NSString *const KCodeResignNotification;
-FOUNDATION_EXPORT NSString *const KCheckCPUNotification;
-
 FOUNDATION_EXPORT NSString *const minus_d;
 FOUNDATION_EXPORT NSString *const minus_p;
 FOUNDATION_EXPORT NSString *const minus_ex;
+FOUNDATION_EXPORT NSString *const minus_wp;
 FOUNDATION_EXPORT NSString *const minus_cer;
 FOUNDATION_EXPORT NSString *const minus_py;
 FOUNDATION_EXPORT NSString *const minus_h;
@@ -22,8 +19,6 @@ FOUNDATION_EXPORT NSString *const minus_h;
 FOUNDATION_EXPORT NSString *const kPayloadDirName;
 FOUNDATION_EXPORT NSString *const kFrameworksDirName;
 FOUNDATION_EXPORT NSString *const kPlugIns;
-FOUNDATION_EXPORT NSString *const kMainApp;
-FOUNDATION_EXPORT NSString *const kExtensionApp;
 
 
 typedef enum {
@@ -32,6 +27,19 @@ typedef enum {
     CPU_CHECK
     
 }NotificationType;
+
+typedef enum {
+    Normal = 0,
+    WatchKitExtension,
+    WatchKitApp
+}EntitlementsType;
+
+typedef enum {
+    MainApp = 0,
+    Extension,
+    WatchApp,
+    Swift
+}AppType;
 
 @interface SharedData : NSObject
 
@@ -50,7 +58,6 @@ typedef enum {
 
 @property (nonatomic, copy) NSString *tempPath;
 @property (nonatomic, copy) NSString *commandPath;
-@property (nonatomic, copy) NSString *entitlementsPlistPath;
 
 
 //the flag for different actions
@@ -58,14 +65,32 @@ typedef enum {
 @property (nonatomic, assign) BOOL isResignAndDecode;
 @property (nonatomic, assign) BOOL isOnlyResign;
 
-@property (nonatomic, copy) NSString *extensionPath;
+@property (nonatomic, copy) NSString *watchKitExtensionPath;
+@property (nonatomic, copy) NSString *watchKitAppPath;
+@property (nonatomic, copy) NSString *swiftFrameworksPath;
+@property (nonatomic, copy) NSString *plugInsPath;
+@property (nonatomic, copy) NSString *extensionEntitlementsPath;
 
-@property (nonatomic, copy) NSString *archivedExpandedEntitlementsFilePath;
+@property (nonatomic, strong) NSMutableArray *swiftFrameworks;
 
-@property (nonatomic, strong) NSArray *appGroups;
-@property (nonatomic, strong) NSArray *extensionAppGroups;
-@property (nonatomic, copy) NSString *extensionAppEntitlementsPlistPath;
-@property (nonatomic, copy) NSString *currentAppType;
+/**
+ * define the public entitlements plist path veriables
+ */
+@property (nonatomic, copy) NSString *watchKitExtensionEntitlementsPlistPath;
+@property (nonatomic, copy) NSString *watchKitAppEntitlementsPlistPath;
+@property (nonatomic, copy) NSString *normalEntitlementsPlistPath;
+
+@property (nonatomic, copy) NSString *watchKitAppID;
+@property (nonatomic, copy) NSString *mainAppID;
+
+/**
+ * define the public support veriables
+ */
+@property (nonatomic, assign) BOOL isSupportWatchKitExtension;
+@property (nonatomic, assign) BOOL isSupportWatchKitApp;
+@property (nonatomic, assign) BOOL isSupportSwift;
+@property (nonatomic, assign) BOOL isSupportAppGroup;
+@property (nonatomic, assign) BOOL isSupportExtensionEntitlements;
 
 + (SharedData *) sharedInstance;
 

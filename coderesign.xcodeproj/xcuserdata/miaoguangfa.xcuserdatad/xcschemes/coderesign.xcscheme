@@ -67,7 +67,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/Volumes/MacintoshHD/Projects/R&amp;D/coderesign/Release/UICatalog.ipa"
+            argument = "/Volumes/MacintoshHD/Projects/Rearch/coderesign/Release/buyer.ipa"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -75,7 +75,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/Volumes/MacintoshHD/Projects/R&amp;D/coderesign/Release/zhengtuappgroup_pro.mobileprovision"
+            argument = "/Volumes/MacintoshHD/Projects/Rearch/coderesign/Release/zhengtuInHouseApp_distribution.mobileprovision"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -83,7 +83,15 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/Volumes/MacintoshHD/Projects/R&amp;D/coderesign/Release/zhengTuAppGroupExtension_pro.mobileprovision"
+            argument = "/Volumes/MacintoshHD/Projects/Rearch/coderesign/Release/zhengtuInHouseWatchKitExtension_distribution.mobileprovision"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-wp"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "/Volumes/MacintoshHD/Projects/Rearch/coderesign/Release/zhengtuInHouseWatchKitApp_distribution.mobileprovision"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -91,7 +99,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "BXTP48X8WA"
+            argument = "&quot;Beijing Yunce Network Technology Co., Ltd&quot;"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

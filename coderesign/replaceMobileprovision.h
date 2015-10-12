@@ -12,6 +12,6 @@
 
 + (replaceMobileprovision *) sharedInstance;
 
-- (void) replace;
+- (void) replaceWithFinishedBlock:(void(^)(BOOL isFinished)) finishedBlock;
 
 @end

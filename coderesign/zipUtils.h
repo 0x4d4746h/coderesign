@@ -8,11 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
+typedef void(^UnzipFinished)(BOOL isFinished);
+typedef void(^ZipFinished)(BOOL isFinished);
+
 @interface zipUtils : NSObject
 
 + (zipUtils *)sharedInstance;
 
-- (void) doZip;
-- (void) doUnZip;
+- (void) doZipWithFinishedBlock:(ZipFinished)finishedBlock;
+- (void) doUnZipWithFinishedBlock:(UnzipFinished)finishedBlock;
 
 @end

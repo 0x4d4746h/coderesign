@@ -12,6 +12,8 @@
 		8C16D1191BAA6508004A5D3A /* parseAppInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C16D1181BAA6508004A5D3A /* parseAppInfo.m */; };
 		8C16D11C1BAA6982004A5D3A /* resignAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C16D11B1BAA6982004A5D3A /* resignAction.m */; };
 		8C16D1201BAA9D9A004A5D3A /* checkAppCPUConstruction.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C16D11F1BAA9D9A004A5D3A /* checkAppCPUConstruction.m */; };
+		8C1819C11BCB547F008A075A /* ModifyXcent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8C1819C01BCB547F008A075A /* ModifyXcent.mm */; settings = {ASSET_TAGS = (); }; };
+		8C37D94C1BC901950058E15E /* parsePlayload.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8C37D94B1BC901950058E15E /* parsePlayload.mm */; settings = {ASSET_TAGS = (); }; };
 		8C45AB611BA804CB004F4D7E /* decompressIcon.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8C45AB601BA804CB004F4D7E /* decompressIcon.mm */; };
 		8C45AB661BA8132D004F4D7E /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C45AB651BA8132D004F4D7E /* Python.framework */; };
 		8C5079DC1BA6AC33005350DC /* coderesign.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8C5079DA1BA6AC33005350DC /* coderesign.mm */; };
@@ -48,6 +50,10 @@
 		8C16D11B1BAA6982004A5D3A /* resignAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = resignAction.m; sourceTree = "<group>"; };
 		8C16D11E1BAA9D9A004A5D3A /* checkAppCPUConstruction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = checkAppCPUConstruction.h; sourceTree = "<group>"; };
 		8C16D11F1BAA9D9A004A5D3A /* checkAppCPUConstruction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = checkAppCPUConstruction.m; sourceTree = "<group>"; };
+		8C1819BF1BCB547F008A075A /* ModifyXcent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModifyXcent.h; sourceTree = "<group>"; };
+		8C1819C01BCB547F008A075A /* ModifyXcent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModifyXcent.mm; sourceTree = "<group>"; };
+		8C37D94A1BC901950058E15E /* parsePlayload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parsePlayload.h; sourceTree = "<group>"; };
+		8C37D94B1BC901950058E15E /* parsePlayload.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = parsePlayload.mm; sourceTree = "<group>"; };
 		8C45AB5F1BA804CB004F4D7E /* decompressIcon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = decompressIcon.h; sourceTree = "<group>"; };
 		8C45AB601BA804CB004F4D7E /* decompressIcon.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = decompressIcon.mm; sourceTree = "<group>"; };
 		8C45AB651BA8132D004F4D7E /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = System/Library/Frameworks/Python.framework; sourceTree = SDKROOT; };
@@ -106,32 +112,36 @@
 				8C5079DB1BA6AC33005350DC /* main.mm */,
 				8C5079D91BA6AC33005350DC /* coderesign.h */,
 				8C5079DA1BA6AC33005350DC /* coderesign.mm */,
-				8C45AB5F1BA804CB004F4D7E /* decompressIcon.h */,
-				8C45AB601BA804CB004F4D7E /* decompressIcon.mm */,
+				8C7BCCA11BABEDEA00FEC67E /* securityEncodeDecodeMobileProvision.h */,
+				8C7BCCA21BABEDEA00FEC67E /* securityEncodeDecodeMobileProvision.m */,
+				8CD7CE1D1BA978A000F50AB8 /* checkCommandArguments.h */,
+				8CD7CE1E1BA978A000F50AB8 /* checkCommandArguments.m */,
+				8CD7CE171BA975D100F50AB8 /* checkSystemEnvironments.h */,
+				8CD7CE181BA975D100F50AB8 /* checkSystemEnvironments.m */,
 				8CD7CE0E1BA96F2700F50AB8 /* checkAvailableCerts.h */,
 				8CD7CE0F1BA96F2700F50AB8 /* checkAvailableCerts.m */,
+				8CD7CE1A1BA9770200F50AB8 /* zipUtils.h */,
+				8CD7CE1B1BA9770200F50AB8 /* zipUtils.m */,
+				8C37D94A1BC901950058E15E /* parsePlayload.h */,
+				8C37D94B1BC901950058E15E /* parsePlayload.mm */,
+				8C16D1141BAA5F6B004A5D3A /* replaceMobileprovision.h */,
+				8C16D1151BAA5F6B004A5D3A /* replaceMobileprovision.m */,
+				8C1819BF1BCB547F008A075A /* ModifyXcent.h */,
+				8C1819C01BCB547F008A075A /* ModifyXcent.mm */,
+				8C16D11E1BAA9D9A004A5D3A /* checkAppCPUConstruction.h */,
+				8C16D11F1BAA9D9A004A5D3A /* checkAppCPUConstruction.m */,
+				8C16D11A1BAA6982004A5D3A /* resignAction.h */,
+				8C16D11B1BAA6982004A5D3A /* resignAction.m */,
+				8C16D1171BAA6508004A5D3A /* parseAppInfo.h */,
+				8C16D1181BAA6508004A5D3A /* parseAppInfo.m */,
 				8CD7CE111BA96F9400F50AB8 /* DebugLog.h */,
 				8CD7CE121BA96F9400F50AB8 /* DebugLog.m */,
 				8CD7CE141BA970AB00F50AB8 /* SharedData.h */,
 				8CD7CE151BA970AB00F50AB8 /* SharedData.m */,
-				8CD7CE171BA975D100F50AB8 /* checkSystemEnvironments.h */,
-				8CD7CE181BA975D100F50AB8 /* checkSystemEnvironments.m */,
-				8CD7CE1A1BA9770200F50AB8 /* zipUtils.h */,
-				8CD7CE1B1BA9770200F50AB8 /* zipUtils.m */,
-				8CD7CE1D1BA978A000F50AB8 /* checkCommandArguments.h */,
-				8CD7CE1E1BA978A000F50AB8 /* checkCommandArguments.m */,
-				8C16D1141BAA5F6B004A5D3A /* replaceMobileprovision.h */,
-				8C16D1151BAA5F6B004A5D3A /* replaceMobileprovision.m */,
-				8C16D1171BAA6508004A5D3A /* parseAppInfo.h */,
-				8C16D1181BAA6508004A5D3A /* parseAppInfo.m */,
-				8C16D11A1BAA6982004A5D3A /* resignAction.h */,
-				8C16D11B1BAA6982004A5D3A /* resignAction.m */,
-				8C16D11E1BAA9D9A004A5D3A /* checkAppCPUConstruction.h */,
-				8C16D11F1BAA9D9A004A5D3A /* checkAppCPUConstruction.m */,
 				8C1620AD1BAACA5400E27CE1 /* Usage.h */,
 				8C1620AE1BAACA5400E27CE1 /* Usage.m */,
-				8C7BCCA11BABEDEA00FEC67E /* securityEncodeDecodeMobileProvision.h */,
-				8C7BCCA21BABEDEA00FEC67E /* securityEncodeDecodeMobileProvision.m */,
+				8C45AB5F1BA804CB004F4D7E /* decompressIcon.h */,
+				8C45AB601BA804CB004F4D7E /* decompressIcon.mm */,
 			);
 			path = coderesign;
 			sourceTree = "<group>";
@@ -222,7 +232,9 @@
 				8C5079DD1BA6AC33005350DC /* main.mm in Sources */,
 				8CD7CE131BA96F9400F50AB8 /* DebugLog.m in Sources */,
 				8C16D11C1BAA6982004A5D3A /* resignAction.m in Sources */,
+				8C37D94C1BC901950058E15E /* parsePlayload.mm in Sources */,
 				8C5079DC1BA6AC33005350DC /* coderesign.mm in Sources */,
+				8C1819C11BCB547F008A075A /* ModifyXcent.mm in Sources */,
 				8CD7CE161BA970AB00F50AB8 /* SharedData.m in Sources */,
 				8C16D1161BAA5F6B004A5D3A /* replaceMobileprovision.m in Sources */,
 				8C45AB611BA804CB004F4D7E /* decompressIcon.mm in Sources */,

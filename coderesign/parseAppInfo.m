@@ -26,7 +26,7 @@ static parseAppInfo *_instance = NULL;
     return _instance;
 }
 
-- (void)parse:(NSString *)infoPlistPath
+- (void)parse:(NSString *)infoPlistPath withAppType:(AppType)type
 {
     NSDictionary *infoPlist_dictionary = [[NSDictionary alloc]initWithContentsOfFile:infoPlistPath];
     
@@ -43,20 +43,23 @@ static parseAppInfo *_instance = NULL;
     NSString *_sdkVersion       = [infoPlist_dictionary objectForKey:@"DTPlatformVersion"];
     NSString *_cfBundleExecutable = [infoPlist_dictionary objectForKey:@"CFBundleExecutable"];
     
-    
     NSString *normal_icon = @"";
-    if (_iconName != nil) {
-
-        NSString *icon_file   = [[SharedData sharedInstance].appPath stringByAppendingPathComponent:_iconName];
-        NSData *_icon_data = [[NSFileManager defaultManager]contentsAtPath:icon_file];
-        NSString *destinationPath = [SharedData sharedInstance].commandPath;
+    if (type == MainApp) {
         
-        NSString *outputPath = [destinationPath stringByAppendingPathComponent:@"Icon-compressed.png"];
-        [[NSFileManager defaultManager]createFileAtPath:outputPath contents:_icon_data attributes:nil];
-        
-        normal_icon = [destinationPath stringByAppendingPathComponent:@"icon.png"];
-        [decompressIcon convertEncryptedImageDataToNormal:outputPath withNewFilePath:normal_icon withPy:[SharedData sharedInstance].crossedArguments[minus_py]];
+        if (_iconName != nil) {
+            
+            NSString *icon_file   = [[SharedData sharedInstance].appPath stringByAppendingPathComponent:_iconName];
+            NSData *_icon_data = [[NSFileManager defaultManager]contentsAtPath:icon_file];
+            NSString *destinationPath = [SharedData sharedInstance].commandPath;
+            
+            NSString *outputPath = [destinationPath stringByAppendingPathComponent:@"Icon-compressed.png"];
+            [[NSFileManager defaultManager]createFileAtPath:outputPath contents:_icon_data attributes:nil];
+            
+            normal_icon = [destinationPath stringByAppendingPathComponent:@"icon.png"];
+            [decompressIcon convertEncryptedImageDataToNormal:outputPath withNewFilePath:normal_icon withPy:[SharedData sharedInstance].crossedArguments[minus_py]];
+        }
     }
+    
     
     NSDictionary *_appInfo = @{
                                @"packageName"       :   [self nilToString:_packageName],
@@ -70,7 +73,17 @@ static parseAppInfo *_instance = NULL;
     NSData *objData = [NSJSONSerialization dataWithJSONObject:_appInfo options:NSJSONWritingPrettyPrinted error:nil];
     NSString *jsonString = [[NSString alloc]initWithData:objData encoding:NSUTF8StringEncoding];
     
-    NSString *_resutl = [@"<appInfo>" stringByAppendingFormat:@"%@</appInfo>", jsonString];
+    NSString *_resutl = @"";
+    
+    if (type == MainApp) {
+        _resutl = [@"<MainAppInfo>" stringByAppendingFormat:@"%@</MainAppInfo>",jsonString];
+    }else if (type == Extension) {
+        _resutl = [@"<ExtensionAppInfo>" stringByAppendingFormat:@"%@</ExtensionAppInfo>",jsonString];
+    }else if (type == WatchApp) {
+        _resutl = [@"<WatchKitAppInfo>" stringByAppendingFormat:@"%@</WatchKitAppInfo>",jsonString];
+    }
+    
+    
     [DebugLog showDebugLog:_resutl withDebugLevel:Info];
 }
 
@@ -79,6 +92,39 @@ static parseAppInfo *_instance = NULL;
         return @"";
     }
     return object;
+}
+
+- (void)modifyWatchKitExtensionInfoPlistForNSExtension
+{
+    NSString *_watchKitExtensionInfoPlist = [[SharedData sharedInstance].watchKitExtensionPath stringByAppendingPathComponent:@"Info.plist"];
+    NSMutableDictionary *_watchKitExtensionInfoPlistDic = [[NSMutableDictionary alloc]initWithContentsOfFile:_watchKitExtensionInfoPlist];
+    
+    
+    NSDictionary *_nsExtensionAttributes = [_watchKitExtensionInfoPlistDic objectForKey:@"NSExtension"];
+    if (_nsExtensionAttributes) {
+        NSDictionary *_attribute = [_nsExtensionAttributes objectForKey:@"NSExtensionAttributes"];
+        if (_attribute) {
+            
+            [_attribute setValue:[SharedData sharedInstance].watchKitAppID forKey:@"WKAppBundleIdentifier"];
+            [_nsExtensionAttributes setValue:_attribute forKey:@"NSExtensionAttributes"];
+            [_watchKitExtensionInfoPlistDic setValue:_nsExtensionAttributes forKey:@"NSExtension"];
+            
+            [_watchKitExtensionInfoPlistDic writeToFile:_watchKitExtensionInfoPlist atomically:YES];
+        }
+    }
+    
+    NSLog(@"modifyWatchKitExtensionInfoPlistForNSExtension: %@", _watchKitExtensionInfoPlistDic);
+}
+
+- (void)modifyWatchKitAppCompanionID {
+    NSString *_watchKitAppInfoPlist = [[SharedData sharedInstance].watchKitAppPath stringByAppendingPathComponent:@"Info.plist"];
+    NSMutableDictionary *_watchKitAppInfoPlistDic = [[NSMutableDictionary alloc]initWithContentsOfFile:_watchKitAppInfoPlist];
+    
+    [_watchKitAppInfoPlistDic setValue:[SharedData sharedInstance].mainAppID forKey:@"WKCompanionAppBundleIdentifier"];
+    
+    [_watchKitAppInfoPlistDic writeToFile:_watchKitAppInfoPlist atomically:YES];
+
+    NSLog(@"modifyWatchKitAppCompanionID: %@", _watchKitAppInfoPlist);
 }
 
 @end
