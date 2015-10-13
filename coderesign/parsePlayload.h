@@ -12,6 +12,6 @@
 
 + (parsePlayload *) sharedInstance;
 
-- (void) parse;
+- (void) parsePlayloadWithFinishedBlock:(void (^) (BOOL isFinished)) finishedBlock;
 
 @end

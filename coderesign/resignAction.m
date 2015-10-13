@@ -100,7 +100,7 @@ static resignAction *_instance = NULL;
                 //Sign main app at last
                 _currentAppType = MainApp;
                 [self signFile:[SharedData sharedInstance].appPath withAppType:MainApp withFinishedBlock:^(BOOL isFinished) {
-                    [self _doZip];
+                    [self zipPackage];
                 }];
             }
         }];
@@ -109,7 +109,7 @@ static resignAction *_instance = NULL;
         //If not support swift after sign watch kit app and extension, then sign main app
         _currentAppType = MainApp;
         [self signFile:[SharedData sharedInstance].appPath withAppType:MainApp withFinishedBlock:^(BOOL isFinished) {
-            [self _doZip];
+            [self zipPackage];
         }];
     }
 }
@@ -276,7 +276,7 @@ static resignAction *_instance = NULL;
     }
 }
 
-- (void) _doZip {
+- (void) zipPackage {
     [DebugLog showDebugLog:Pass];
     [[zipUtils sharedInstance]doZipWithFinishedBlock:^(BOOL isFinished) {
         if (isFinished) {

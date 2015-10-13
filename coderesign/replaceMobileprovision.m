@@ -44,76 +44,94 @@ static replaceMobileprovision *_instance = NULL;
     if (![SharedData sharedInstance].isOnlyDecodeIcon) {
         [DebugLog showDebugLog:@"############################################################################ Replace mobile provision..." withDebugLevel:Debug];
     }
-    
     // parse play load
-    [[parsePlayload sharedInstance]parse];
-
-    if (![SharedData sharedInstance].isOnlyDecodeIcon) {
-        
-        // Delete embedded.mobileprovision file from main.app
-        if ([[NSFileManager defaultManager] fileExistsAtPath:[[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"embedded.mobileprovision"]]) {
-            [DebugLog showDebugLog:@"Found embedded.mobileprovision in main app, deleting..." withDebugLevel:Debug];
+    [[parsePlayload sharedInstance]parsePlayloadWithFinishedBlock:^(BOOL isFinished) {
+        if (![SharedData sharedInstance].isInHouseType) {
             
-            [[NSFileManager defaultManager] removeItemAtPath:[[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"embedded.mobileprovision"] error:nil];
-        }
-        
-        //Delete embedded.mobileprovision file from appex
-        if ([SharedData sharedInstance].isSupportWatchKitExtension) {
-            [DebugLog showDebugLog:@"Found embedded.mobileprovision in watch kit extension, deleting..." withDebugLevel:Debug];
-            [[NSFileManager defaultManager] removeItemAtPath:[[SharedData sharedInstance].watchKitExtensionPath stringByAppendingPathComponent:@"embedded.mobileprovision"] error:nil];
-        }
-        
-        // Delete embedded.mobileprovision file from watch kit app in appex
-        if ([SharedData sharedInstance].isSupportWatchKitApp) {
-            [DebugLog showDebugLog:@"Found embedded.mobileprovision in watch kit app, deleting..." withDebugLevel:Debug];
-            [[NSFileManager defaultManager] removeItemAtPath:[[SharedData sharedInstance].watchKitAppPath stringByAppendingPathComponent:@"embedded.mobileprovision"] error:nil];
-        }
-    }
-    
-    if (![SharedData sharedInstance].isOnlyDecodeIcon) {
-        __weak typeof(&*self)  weakSelf = self;
-        dispatch_group_t copyMobileProvisionGroup = dispatch_group_create();
-        
-        dispatch_group_enter(copyMobileProvisionGroup);
-        [self _copyAndUpdateNewMobileProvisionFileForApp:MainApp WithFinishedBlock:^(BOOL isFinished) {
             
-            //if support watch kit extension, then copy your mobile provision file to specific path.
-            if (isFinished && [SharedData sharedInstance].isSupportWatchKitExtension) {
-                [weakSelf _copyAndUpdateNewMobileProvisionFileForApp:Extension WithFinishedBlock:^(BOOL isFinished) {
+            if (![SharedData sharedInstance].isOnlyDecodeIcon) {
+                
+                // Delete embedded.mobileprovision file from main.app
+                if ([[NSFileManager defaultManager] fileExistsAtPath:[[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"embedded.mobileprovision"]]) {
+                    [DebugLog showDebugLog:@"Found embedded.mobileprovision in main app, deleting..." withDebugLevel:Debug];
                     
-                    // if support watch kit app, then copy your mobile provision file to specific path.
-                    if (isFinished && [SharedData sharedInstance].isSupportWatchKitApp) {
-                        [weakSelf _copyAndUpdateNewMobileProvisionFileForApp:WatchApp WithFinishedBlock:^(BOOL isFinished) {
+                    [[NSFileManager defaultManager] removeItemAtPath:[[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"embedded.mobileprovision"] error:nil];
+                }
+                
+                //Delete embedded.mobileprovision file from appex
+                if ([SharedData sharedInstance].isSupportWatchKitExtension) {
+                    [DebugLog showDebugLog:@"Found embedded.mobileprovision in watch kit extension, deleting..." withDebugLevel:Debug];
+                    [[NSFileManager defaultManager] removeItemAtPath:[[SharedData sharedInstance].watchKitExtensionPath stringByAppendingPathComponent:@"embedded.mobileprovision"] error:nil];
+                }
+                
+                // Delete embedded.mobileprovision file from watch kit app in appex
+                if ([SharedData sharedInstance].isSupportWatchKitApp) {
+                    [DebugLog showDebugLog:@"Found embedded.mobileprovision in watch kit app, deleting..." withDebugLevel:Debug];
+                    [[NSFileManager defaultManager] removeItemAtPath:[[SharedData sharedInstance].watchKitAppPath stringByAppendingPathComponent:@"embedded.mobileprovision"] error:nil];
+                }
+            }
+        }
+        
+        if (![SharedData sharedInstance].isOnlyDecodeIcon) {
+            
+            if (![SharedData sharedInstance].isInHouseType) {
+                __weak typeof(&*self)  weakSelf = self;
+                dispatch_group_t copyMobileProvisionGroup = dispatch_group_create();
+                
+                dispatch_group_enter(copyMobileProvisionGroup);
+                [self _copyAndUpdateNewMobileProvisionFileForApp:MainApp WithFinishedBlock:^(BOOL isFinished) {
+                    
+                    //if support watch kit extension, then copy your mobile provision file to specific path.
+                    if (isFinished && [SharedData sharedInstance].isSupportWatchKitExtension) {
+                        [weakSelf _copyAndUpdateNewMobileProvisionFileForApp:Extension WithFinishedBlock:^(BOOL isFinished) {
                             
-                            
-                            dispatch_group_leave(copyMobileProvisionGroup);
+                            // if support watch kit app, then copy your mobile provision file to specific path.
+                            if (isFinished && [SharedData sharedInstance].isSupportWatchKitApp) {
+                                [weakSelf _copyAndUpdateNewMobileProvisionFileForApp:WatchApp WithFinishedBlock:^(BOOL isFinished) {
+                                    
+                                    
+                                    dispatch_group_leave(copyMobileProvisionGroup);
+                                }];
+                            }else{
+                                dispatch_group_leave(copyMobileProvisionGroup);
+                            }
                         }];
                     }else{
                         dispatch_group_leave(copyMobileProvisionGroup);
                     }
                 }];
+                
+                dispatch_group_notify(copyMobileProvisionGroup, dispatch_get_main_queue(), ^{
+                    finishedBlock(TRUE);
+                });
             }else{
-                dispatch_group_leave(copyMobileProvisionGroup);
+                NSString *_main_app_infoPlistPath = [[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"Info.plist"];
+                [[parseAppInfo sharedInstance]parse:_main_app_infoPlistPath withAppType:MainApp];
+                
+                if ([SharedData sharedInstance].isSupportWatchKitExtension) {
+                    NSString *_extension_infoPlistPath = [[SharedData sharedInstance].watchKitExtensionPath stringByAppendingPathComponent:@"Info.plist"];
+                    [[parseAppInfo sharedInstance]parse:_extension_infoPlistPath withAppType:Extension];
+                }
+                if ([SharedData sharedInstance].isSupportWatchKitApp) {
+                    NSString *_watchkitapp_infoPlistPath = [[SharedData sharedInstance].watchKitAppPath stringByAppendingPathComponent:@"Info.plist"];
+                    [[parseAppInfo sharedInstance]parse:_watchkitapp_infoPlistPath withAppType:WatchApp];
+                }
+                finishedBlock(TRUE);
             }
-        }];
-        
-        dispatch_group_notify(copyMobileProvisionGroup, dispatch_get_main_queue(), ^{
+            
+        }else {
+            //only do parse app info and decompress icon png
+            NSString *infoPlistPath = [[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"Info.plist"];
+            [[parseAppInfo sharedInstance]parse:infoPlistPath withAppType:MainApp];
+            
+            [[NSFileManager defaultManager] removeItemAtPath:[SharedData sharedInstance].workingPath error:nil];
+            [[NSFileManager defaultManager] removeItemAtPath:[SharedData sharedInstance].tempPath error:nil];
+            
+            [DebugLog showDebugLog:AllDone];
             finishedBlock(TRUE);
-        });
-        
-    }else {
-        //only do parse app info and decompress icon png
-        
-        NSString *infoPlistPath = [[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"Info.plist"];
-        [[parseAppInfo sharedInstance]parse:infoPlistPath withAppType:MainApp];
-        
-        [[NSFileManager defaultManager] removeItemAtPath:[SharedData sharedInstance].workingPath error:nil];
-        [[NSFileManager defaultManager] removeItemAtPath:[SharedData sharedInstance].tempPath error:nil];
-        
-        [DebugLog showDebugLog:AllDone];
-        finishedBlock(TRUE);
-        exit(0);
-    }
+            exit(0);
+        }
+    }];
 }
 
 - (void) _copyAndUpdateNewMobileProvisionFileForApp:(AppType)type WithFinishedBlock:(CopyFinishedBlock)copyFinishedBlock {

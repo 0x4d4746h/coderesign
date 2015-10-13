@@ -12,4 +12,5 @@
 
 + (resignAction *) sharedInstance;
 - (void) resign;
+- (void) zipPackage;
 @end

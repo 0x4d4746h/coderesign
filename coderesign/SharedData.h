@@ -91,6 +91,7 @@ typedef enum {
 @property (nonatomic, assign) BOOL isSupportSwift;
 @property (nonatomic, assign) BOOL isSupportAppGroup;
 @property (nonatomic, assign) BOOL isSupportExtensionEntitlements;
+@property (nonatomic, assign) BOOL isInHouseType;
 
 + (SharedData *) sharedInstance;
 

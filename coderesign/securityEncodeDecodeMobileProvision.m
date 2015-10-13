@@ -18,6 +18,7 @@
 
 @property (nonatomic, assign) EntitlementsType entitlementsType;
 @property (nonatomic, copy) finished finishedBlock;
+@property (nonatomic, assign) BOOL isCheckingInHouseType;
 
 @end
 
@@ -43,6 +44,16 @@ static securityEncodeDecodeMobileProvision *_instance = NULL;
         [self _dump:mobileProvisionFilePath];
     }else{
         _finishedBlock (FALSE, entitlementsType);
+    }
+}
+- (void)checkIfInHouseType:(NSString *)mobileProvisionFilePath withBlock:(finished)finishedBlock
+{
+    _finishedBlock = finishedBlock;
+    if (mobileProvisionFilePath != NULL) {
+        _isCheckingInHouseType = YES;
+        [self _dump:mobileProvisionFilePath];
+    }else{
+        _finishedBlock(FALSE, Normal);
     }
 }
 
@@ -87,31 +98,48 @@ static securityEncodeDecodeMobileProvision *_instance = NULL;
     
     NSDictionary *dic = [[NSDictionary alloc]initWithContentsOfFile:_path];
     if (dic != nil) {
-        NSDictionary *entitlements = [dic objectForKey:@"Entitlements"];
-        if (entitlements != nil) {
-            //write to entitlements.plist
-            
-            NSString *_entitlementFileName = [self _getFilePathWithPrefix:@"entitlements"];
+        if (_isCheckingInHouseType) {
+            BOOL _tag = (BOOL)[dic objectForKey:@"ProvisionsAllDevices"];
+            if (_tag) {
+                [SharedData sharedInstance].isInHouseType = TRUE;
+                [DebugLog showDebugLog:@"IPA is In-House type, NOT need to resign" withDebugLevel:Debug];
+                
+                NSDictionary *_inhouse_type = @{@"ProvisionsAllDevices"       :   @(_tag)};
+                NSData *objData = [NSJSONSerialization dataWithJSONObject:_inhouse_type options:NSJSONWritingPrettyPrinted error:nil];
+                NSString *jsonString = [[NSString alloc]initWithData:objData encoding:NSUTF8StringEncoding];
+                
+                NSString *_resutl = [@"<InHouse>" stringByAppendingFormat:@"%@</InHouse>",jsonString];
+                [DebugLog showDebugLog:_resutl withDebugLevel:Info];
+            }
+            _isCheckingInHouseType = FALSE;
+            _finishedBlock (TRUE, Normal);
+        }else{
+            NSDictionary *entitlements = [dic objectForKey:@"Entitlements"];
+            if (entitlements != nil) {
+                //write to entitlements.plist
+                
+                NSString *_entitlementFileName = [self _getFilePathWithPrefix:@"entitlements"];
 
-            NSString * entitlementsPlistPath = [[SharedData sharedInstance].tempPath stringByAppendingPathComponent:_entitlementFileName];
-            [entitlements writeToFile:entitlementsPlistPath atomically:YES];
-            
-            if (_entitlementsType == Normal) {
+                NSString * entitlementsPlistPath = [[SharedData sharedInstance].tempPath stringByAppendingPathComponent:_entitlementFileName];
+                [entitlements writeToFile:entitlementsPlistPath atomically:YES];
                 
-                [SharedData sharedInstance].normalEntitlementsPlistPath = entitlementsPlistPath;
+                if (_entitlementsType == Normal) {
+                    
+                    [SharedData sharedInstance].normalEntitlementsPlistPath = entitlementsPlistPath;
 
-                _finishedBlock(TRUE, Normal);
-            }else if (_entitlementsType == WatchKitExtension) {
-                
-                [SharedData sharedInstance].watchKitExtensionEntitlementsPlistPath = entitlementsPlistPath;
-                
-                _finishedBlock(TRUE, WatchKitExtension);
-                
-            }else if (_entitlementsType == WatchKitApp){
-                
-                [SharedData sharedInstance].watchKitAppEntitlementsPlistPath = entitlementsPlistPath;
-                
-                _finishedBlock(TRUE, WatchKitApp);
+                    _finishedBlock(TRUE, Normal);
+                }else if (_entitlementsType == WatchKitExtension) {
+                    
+                    [SharedData sharedInstance].watchKitExtensionEntitlementsPlistPath = entitlementsPlistPath;
+                    
+                    _finishedBlock(TRUE, WatchKitExtension);
+                    
+                }else if (_entitlementsType == WatchKitApp){
+                    
+                    [SharedData sharedInstance].watchKitAppEntitlementsPlistPath = entitlementsPlistPath;
+                    
+                    _finishedBlock(TRUE, WatchKitApp);
+                }
             }
         }
     }

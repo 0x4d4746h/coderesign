@@ -16,5 +16,5 @@ typedef void(^finished)(BOOL isFinished, EntitlementsType type);
 + (securityEncodeDecodeMobileProvision *)sharedInstance;
 
 - (void) dumpEntitlementsFromMobileProvision:(NSString *)mobileProvisionFilePath withEntitlementsType:(EntitlementsType) entitlementsType withBlock:(finished) finishedBlock;
-
+- (void) checkIfInHouseType:(NSString *)mobileProvisionFilePath withBlock:(finished) finishedBlock;
 @end

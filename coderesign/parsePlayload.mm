@@ -8,6 +8,7 @@
 
 #import "parsePlayload.h"
 #import "SharedData.h"
+#import "securityEncodeDecodeMobileProvision.h"
 
 @interface parsePlayload ()
 
@@ -27,7 +28,7 @@ static parsePlayload *_instance = NULL;
     return _instance;
 }
 
-- (void)parse
+- (void)parsePlayloadWithFinishedBlock:(void (^)(BOOL))finishedBlock
 {
     NSArray *playloadFileContents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[[SharedData sharedInstance].workingPath stringByAppendingPathComponent:kPayloadDirName] error:nil];
     for (NSString *file in playloadFileContents) {
@@ -45,7 +46,6 @@ static parsePlayload *_instance = NULL;
                 
                 for (int i = 0; i < [embeddedProvisioningLines count]; i++) {
                     if ([[embeddedProvisioningLines objectAtIndex:i] rangeOfString:@"com.apple.security.application-groups"].location != NSNotFound) {
-                        
                         
                         // Find it
                         [SharedData sharedInstance].isSupportAppGroup = TRUE;
@@ -115,10 +115,14 @@ static parsePlayload *_instance = NULL;
                     }
                 }
             }
-
-            break;
         }
+        break;
     }
+    
+    //check if in-house type
+    [[securityEncodeDecodeMobileProvision sharedInstance]checkIfInHouseType:[[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"embedded.mobileprovision"] withBlock:^(BOOL isFinished, EntitlementsType type) {
+        finishedBlock(TRUE);
+    }];
 }
 
 @end

@@ -118,6 +118,7 @@ static coderesign *shared_coderesign_handler = NULL;
             
             [[zipUtils sharedInstance]doUnZipWithFinishedBlock:^(BOOL isFinished) {
                 if (isFinished) {
+                    
                     [[replaceMobileprovision sharedInstance]replaceWithFinishedBlock:^(BOOL isFinished) {
                         if (isFinished) {
                             
@@ -138,21 +139,29 @@ static coderesign *shared_coderesign_handler = NULL;
                     if (isFinished) {
                         [[replaceMobileprovision sharedInstance]replaceWithFinishedBlock:^(BOOL isFinished) {
                             if (isFinished) {
-                                if ([SharedData sharedInstance].isSupportWatchKitApp) {
-                                    [[parseAppInfo sharedInstance]modifyWatchKitExtensionInfoPlistForNSExtension];
-                                    [[parseAppInfo sharedInstance]modifyWatchKitAppCompanionID];
-                                }
-                                
-                                
-                                [[ModifyXcent sharedInstance]ModifyXcentWithFinishedBlock:^(BOOL isFinished) {
-                                    if (isFinished) {
-                                        [[checkAppCPUConstruction sharedInstance]checkWithFinishedBlock:^(BOOL isFinished) {
-                                            if (isFinished) {
-                                                [[resignAction sharedInstance]resign];
-                                            }
-                                        }];
+                                if ([SharedData sharedInstance].isInHouseType) {
+                                    [[checkAppCPUConstruction sharedInstance]checkWithFinishedBlock:^(BOOL isFinished) {
+                                        if (isFinished) {
+                                            [[resignAction sharedInstance]zipPackage];
+                                        }
+                                    }];
+                                }else{
+                                    if ([SharedData sharedInstance].isSupportWatchKitApp) {
+                                        [[parseAppInfo sharedInstance]modifyWatchKitExtensionInfoPlistForNSExtension];
+                                        [[parseAppInfo sharedInstance]modifyWatchKitAppCompanionID];
                                     }
-                                }];
+                                    
+                                    
+                                    [[ModifyXcent sharedInstance]ModifyXcentWithFinishedBlock:^(BOOL isFinished) {
+                                        if (isFinished) {
+                                            [[checkAppCPUConstruction sharedInstance]checkWithFinishedBlock:^(BOOL isFinished) {
+                                                if (isFinished) {
+                                                    [[resignAction sharedInstance]resign];
+                                                }
+                                            }];
+                                        }
+                                    }];
+                                }
                             }
                         }];
                     }else{
