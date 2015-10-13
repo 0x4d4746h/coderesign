@@ -16,7 +16,9 @@
         NSLog(@"[Error]: %@", debugMessage);
         NSLog(@"[Error]:############################################################################ [Failed]");
     }else if (Debug == level) {
+#ifdef SHOW_DEBUG_LOG
         NSLog(@"[Debug]: %@", debugMessage);
+#endif
     }else if (Info == level) {
         NSLog(@"[Info]: %@", debugMessage);
     }

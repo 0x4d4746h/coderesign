@@ -44,36 +44,24 @@ static resignAction *_instance = NULL;
 }
 
 - (void)resign {
-    [DebugLog showDebugLog:@"############################################################################ Coderesign..." withDebugLevel:Info];
+    [DebugLog showDebugLog:@"############################################################################ Coderesign..." withDebugLevel:Debug];
     
-    
+    //Check if support watch kit app
     if ([SharedData sharedInstance].isSupportWatchKitApp) {
         _currentAppType = WatchApp;
         
+        //Sign watch kit app if support
         [self signFile:[SharedData sharedInstance].watchKitAppPath withAppType:WatchApp withFinishedBlock:^(BOOL isFinished) {
             if (isFinished) {
+                
+                //check if support watch kit extension
                 if ([SharedData sharedInstance].isSupportWatchKitExtension) {
-                    _currentAppType = WatchApp;
+                    _currentAppType = Extension;
                     
+                    //Sign watch kit extension
                     [self signFile:[SharedData sharedInstance].watchKitExtensionPath withAppType:Extension withFinishedBlock:^(BOOL isFinished) {
                         if (isFinished) {
-                            /**
-                             * Sign swift frameworks if exists
-                             */
-                            if ([SharedData sharedInstance].isSupportSwift) {
-                                _currentAppType = Swift;
-                                [self signSwiftFrameworksSyncWithBlock:^(BOOL isFinished) {
-                                    if (isFinished) {
-                                        [self signFile:[SharedData sharedInstance].appPath withAppType:MainApp withFinishedBlock:^(BOOL isFinished) {
-                                            [self _doZip];
-                                        }];
-                                    }
-                                }];
-                            }else{
-                                [self signFile:[SharedData sharedInstance].appPath withAppType:MainApp withFinishedBlock:^(BOOL isFinished) {
-                                    [self _doZip];
-                                }];
-                            }
+                            [self signSwiftIfSupportAndMainApp];
                         }
                     }];
                 }
@@ -81,84 +69,50 @@ static resignAction *_instance = NULL;
         }];
         
     }else{
-        /**
-         * Sign swift frameworks if exists
-         */
-        if ([SharedData sharedInstance].isSupportSwift) {
-            _currentAppType = Swift;
-            [self signSwiftFrameworksSyncWithBlock:^(BOOL isFinished) {
+        
+        //check if support widget extension if watch kit app is NOT support.
+        if ([SharedData sharedInstance].isSupportWatchKitExtension) {
+            _currentAppType = Extension;
+            
+            //Sign widget extension
+            [self signFile:[SharedData sharedInstance].watchKitExtensionPath withAppType:Extension withFinishedBlock:^(BOOL isFinished) {
                 if (isFinished) {
-                    [self signFile:[SharedData sharedInstance].appPath withAppType:MainApp withFinishedBlock:^(BOOL isFinished) {
-                        [self _doZip];
-                    }];
+                    [self signSwiftIfSupportAndMainApp];
                 }
             }];
         }else{
-            [self signFile:[SharedData sharedInstance].appPath withAppType:MainApp withFinishedBlock:^(BOOL isFinished) {
-                [self _doZip];
-            }];
+            [self signSwiftIfSupportAndMainApp];
         }
     }
-    
-//    dispatch_sync(cocurrentQueue, ^{
-//        [self signFile:[SharedData sharedInstance].appPath withAppType:MainApp withFinishedBlock:^(BOOL isFinished) {
-//            [self _doZip];
-//        }];
-//    });
-    
-        
-//    }
-    
-    
-    /**
-     * Sign watch kit app if support.
-     */
-//    if ([SharedData sharedInstance].isSupportWatchKitApp) {
-//        _currentAppType = WatchApp;
-//        
-//        [self signFile:[SharedData sharedInstance].watchKitAppPath withAppType:WatchApp withFinishedBlock:^(BOOL isFinished) {
-//            if (isFinished) {
-//                dispatch_group_leave(resignGroup);
-//            }
-//        }];
-//    }else {
-//        dispatch_group_leave(resignGroup);
-//    }
-//    
-//    dispatch_group_enter(resignGroup);
-//    //sign watch kit extension
-//    if ([SharedData sharedInstance].isSupportWatchKitExtension) {
-//        _currentAppType = Extension;
-//        
-//        [self signFile:[SharedData sharedInstance].watchKitExtensionPath withAppType:Extension withFinishedBlock:^(BOOL isFinished) {
-//            if (isFinished) {
-//                dispatch_group_leave(resignGroup);
-//            }
-//        }];
-//    }else{
-//        dispatch_group_leave(resignGroup);
-//    }
-//    
-//    dispatch_group_enter(resignGroup);
-//    /**
-//     * Sign swift frameworks if exists
-//     */
-//    if ([SharedData sharedInstance].isSupportSwift) {
-//        _currentAppType = Swift;
-//        [self signSwiftFrameworksSyncWithBlock:^(BOOL isFinished) {
-//            dispatch_group_leave(resignGroup);
-//        }];
-//    }else{
-//        dispatch_group_leave(resignGroup);
-//    }
-//    
-//    dispatch_group_notify(resignGroup, dispatch_get_main_queue(), ^{
-//       [self signFile:[SharedData sharedInstance].appPath withAppType:MainApp withFinishedBlock:^(BOOL isFinished) {
-//           [self _doZip];
-//       }];
-//    });
 }
 
+- (void) signSwiftIfSupportAndMainApp {
+    //Check if support swift
+    if ([SharedData sharedInstance].isSupportSwift) {
+        _currentAppType = Swift;
+        
+        /**
+         * Sign swift frameworks if exists
+         */
+        [self signSwiftFrameworksSyncWithBlock:^(BOOL isFinished) {
+            if (isFinished) {
+                
+                //Sign main app at last
+                _currentAppType = MainApp;
+                [self signFile:[SharedData sharedInstance].appPath withAppType:MainApp withFinishedBlock:^(BOOL isFinished) {
+                    [self _doZip];
+                }];
+            }
+        }];
+    }else{
+        
+        //If not support swift after sign watch kit app and extension, then sign main app
+        _currentAppType = MainApp;
+        [self signFile:[SharedData sharedInstance].appPath withAppType:MainApp withFinishedBlock:^(BOOL isFinished) {
+            [self _doZip];
+        }];
+    }
+}
 
 - (void) signSwiftFrameworksSyncWithBlock:(void(^)(BOOL isFinished)) finishedBlock {
     dispatch_group_t swiftSignGroup = dispatch_group_create();
@@ -188,8 +142,8 @@ static resignAction *_instance = NULL;
 {
     
     _signFinishedBlock = finishedBlock;
-    NSString *_resignFilePath = [@"Start to sign file: " stringByAppendingFormat:@"%@", filePath];
-    [DebugLog showDebugLog:_resignFilePath withDebugLevel:Info];
+    NSString *_resignFilePath = [@"Start to sign file: " stringByAppendingFormat:@"%@, AppType: %d", filePath, type];
+    [DebugLog showDebugLog:_resignFilePath withDebugLevel:Debug];
     
     NSMutableArray *arguments = [NSMutableArray arrayWithObjects:@"-fs", [SharedData sharedInstance].resignedCerName, nil];
     
@@ -261,7 +215,7 @@ static resignAction *_instance = NULL;
     if ([_coderesignTask isRunning] == 0) {
         [timer invalidate];
         _coderesignTask = nil;
-        [DebugLog showDebugLog:@"Codesigning completed" withDebugLevel:Info];
+        [DebugLog showDebugLog:@"Codesigning completed" withDebugLevel:Debug];
         [self _doVerifySignature];
     }
 }
@@ -276,13 +230,13 @@ static resignAction *_instance = NULL;
     
     if (_currentAppType == MainApp) {
         [_verifyTask setArguments:[NSArray arrayWithObjects:@"-v", [SharedData sharedInstance].appPath, nil]];
-        NSLog(@"Verifying %@",[SharedData sharedInstance].appPath);
+        NSLog(@"Verifying %@, AppType: %d",[SharedData sharedInstance].appPath, _currentAppType);
     }else if (_currentAppType == Extension) {
         [_verifyTask setArguments:[NSArray arrayWithObjects:@"-v", [SharedData sharedInstance].watchKitExtensionPath, nil]];
-        NSLog(@"Verifying %@",[SharedData sharedInstance].watchKitExtensionPath);
+        NSLog(@"Verifying %@, AppType: %d",[SharedData sharedInstance].watchKitExtensionPath, _currentAppType);
     }else if (_currentAppType == WatchApp) {
         [_verifyTask setArguments:[NSArray arrayWithObjects:@"-v", [SharedData sharedInstance].watchKitAppPath, nil]];
-        NSLog(@"Verifying %@",[SharedData sharedInstance].watchKitAppPath);
+        NSLog(@"Verifying %@, AppType: %d",[SharedData sharedInstance].watchKitAppPath, _currentAppType);
     }
     
     [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(checkVerificationProcess:) userInfo:nil repeats:TRUE];
@@ -308,7 +262,7 @@ static resignAction *_instance = NULL;
         [timer invalidate];
         _verifyTask = nil;
         if ([_verificationResult length] == 0) {
-            [DebugLog showDebugLog:@"Verifying resigned package success. [Pass]" withDebugLevel:Info];
+            [DebugLog showDebugLog:@"Verifying resigned package success. [Pass]" withDebugLevel:Debug];
             
             _signFinishedBlock (TRUE);
             
@@ -328,7 +282,7 @@ static resignAction *_instance = NULL;
         if (isFinished) {
             [[NSFileManager defaultManager] removeItemAtPath:[SharedData sharedInstance].workingPath error:nil];
             [[NSFileManager defaultManager] removeItemAtPath:[SharedData sharedInstance].tempPath error:nil];
-            [DebugLog showDebugLog:@"coderesign successful" withDebugLevel:Info];
+            [DebugLog showDebugLog:@"coderesign successful" withDebugLevel:Debug];
             [DebugLog showDebugLog:AllDone];
             exit(0);
         }

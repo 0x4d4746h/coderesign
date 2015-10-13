@@ -42,7 +42,7 @@ static replaceMobileprovision *_instance = NULL;
 - (void)replaceWithFinishedBlock:(void (^)(BOOL))finishedBlock
 {
     if (![SharedData sharedInstance].isOnlyDecodeIcon) {
-        [DebugLog showDebugLog:@"############################################################################ Replace mobile provision..." withDebugLevel:Info];
+        [DebugLog showDebugLog:@"############################################################################ Replace mobile provision..." withDebugLevel:Debug];
     }
     
     // parse play load
@@ -52,20 +52,20 @@ static replaceMobileprovision *_instance = NULL;
         
         // Delete embedded.mobileprovision file from main.app
         if ([[NSFileManager defaultManager] fileExistsAtPath:[[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"embedded.mobileprovision"]]) {
-            [DebugLog showDebugLog:@"Found embedded.mobileprovision in main app, deleting..." withDebugLevel:Info];
+            [DebugLog showDebugLog:@"Found embedded.mobileprovision in main app, deleting..." withDebugLevel:Debug];
             
             [[NSFileManager defaultManager] removeItemAtPath:[[SharedData sharedInstance].appPath stringByAppendingPathComponent:@"embedded.mobileprovision"] error:nil];
         }
         
         //Delete embedded.mobileprovision file from appex
         if ([SharedData sharedInstance].isSupportWatchKitExtension) {
-            [DebugLog showDebugLog:@"Found embedded.mobileprovision in watch kit extension, deleting..." withDebugLevel:Info];
+            [DebugLog showDebugLog:@"Found embedded.mobileprovision in watch kit extension, deleting..." withDebugLevel:Debug];
             [[NSFileManager defaultManager] removeItemAtPath:[[SharedData sharedInstance].watchKitExtensionPath stringByAppendingPathComponent:@"embedded.mobileprovision"] error:nil];
         }
         
         // Delete embedded.mobileprovision file from watch kit app in appex
         if ([SharedData sharedInstance].isSupportWatchKitApp) {
-            [DebugLog showDebugLog:@"Found embedded.mobileprovision in watch kit app, deleting..." withDebugLevel:Info];
+            [DebugLog showDebugLog:@"Found embedded.mobileprovision in watch kit app, deleting..." withDebugLevel:Debug];
             [[NSFileManager defaultManager] removeItemAtPath:[[SharedData sharedInstance].watchKitAppPath stringByAppendingPathComponent:@"embedded.mobileprovision"] error:nil];
         }
     }
@@ -230,7 +230,7 @@ static replaceMobileprovision *_instance = NULL;
                 
             } else {
                 
-                [DebugLog showDebugLog:@"IPA info.plist CFBundle identifier doesn't match with your mobile provision, try to change Info.plist with your specific app ID" withDebugLevel:Info];
+                [DebugLog showDebugLog:@"IPA info.plist CFBundle identifier doesn't match with your mobile provision, try to change Info.plist with your specific app ID" withDebugLevel:Debug];
                 [infoPlistDic setValue:identifierInProvisioning forKey:@"CFBundleIdentifier"];
                 [infoPlistDic writeToFile:infoPlistPath atomically:YES];
                 [[parseAppInfo sharedInstance]parse:infoPlistPath withAppType:_currentAppType];

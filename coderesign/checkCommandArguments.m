@@ -14,7 +14,7 @@
 
 + (BOOL)checkArguments:(const char *[])argv number:(int)argc
 {
-    [DebugLog showDebugLog:@"############################################################################ Checking passed arguments..." withDebugLevel:Info];
+    [DebugLog showDebugLog:@"############################################################################ Checking passed arguments..." withDebugLevel:Debug];
     
     NSMutableArray *passed_command_flags_ = [NSMutableArray new];
     NSMutableArray *passed_values_ = [NSMutableArray new];
@@ -43,7 +43,7 @@
     }
     [SharedData sharedInstance].crossedArguments  = [NSDictionary dictionaryWithObjects:passed_values_ forKeys:passed_command_flags_];
     
-    [DebugLog showDebugLog:[SharedData sharedInstance].crossedArguments withDebugLevel:Info];
+    [DebugLog showDebugLog:[SharedData sharedInstance].crossedArguments withDebugLevel:Debug];
     
     if([passed_command_flags_ containsObject:@"-d"]) {
         
@@ -76,10 +76,10 @@
                 }
                 
                 [SharedData sharedInstance].isResignAndDecode = YES;
-                [DebugLog showDebugLog:@"You will do resign and decode icon action" withDebugLevel:Info];
+                [DebugLog showDebugLog:@"You will do resign and decode icon action" withDebugLevel:Debug];
             }else {
                 [SharedData sharedInstance].isOnlyResign = YES;
-                [DebugLog showDebugLog:@"You will only do resign action" withDebugLevel:Info];
+                [DebugLog showDebugLog:@"You will only do resign action" withDebugLevel:Debug];
             }
         }else{
             if ([passed_command_flags_ containsObject:@"-py"]) {
@@ -90,7 +90,7 @@
                 }
                 
                 [SharedData sharedInstance].isOnlyDecodeIcon = YES;
-                [DebugLog showDebugLog:@"You will only do decode icon action" withDebugLevel:Info];
+                [DebugLog showDebugLog:@"You will only do decode icon action" withDebugLevel:Debug];
             }else{
                 [DebugLog showDebugLog:@"-p, - ci options are missing or -py is missing" withDebugLevel:Error];
                 exit(0);

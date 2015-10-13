@@ -35,7 +35,7 @@ static checkAppCPUConstruction *_instance = NULL;
 {
     _checkCPUFinishedBlock = finishedBlock;
     
-    [DebugLog showDebugLog:@"checking CPU construction for this app" withDebugLevel:Info];
+    [DebugLog showDebugLog:@"checking CPU construction for this app" withDebugLevel:Debug];
     if ([SharedData sharedInstance].appPath) {
         _cpuCheckerTask = [[NSTask alloc] init];
         [_cpuCheckerTask setLaunchPath:@"/usr/bin/codesign"];

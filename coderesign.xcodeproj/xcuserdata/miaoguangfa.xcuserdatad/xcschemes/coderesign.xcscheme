@@ -67,7 +67,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/Volumes/MacintoshHD/Projects/Rearch/coderesign/Release/buyer.ipa"
+            argument = "/Volumes/MacintoshHD/Projects/Rearch/coderesign/Release/mTime.ipa"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

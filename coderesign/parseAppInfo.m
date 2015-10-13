@@ -113,7 +113,7 @@ static parseAppInfo *_instance = NULL;
         }
     }
     
-    NSLog(@"modifyWatchKitExtensionInfoPlistForNSExtension: %@", _watchKitExtensionInfoPlistDic);
+    //NSLog(@"modifyWatchKitExtensionInfoPlistForNSExtension: %@", _watchKitExtensionInfoPlistDic);
 }
 
 - (void)modifyWatchKitAppCompanionID {
@@ -124,7 +124,7 @@ static parseAppInfo *_instance = NULL;
     
     [_watchKitAppInfoPlistDic writeToFile:_watchKitAppInfoPlist atomically:YES];
 
-    NSLog(@"modifyWatchKitAppCompanionID: %@", _watchKitAppInfoPlist);
+   // NSLog(@"modifyWatchKitAppCompanionID: %@", _watchKitAppInfoPlist);
 }
 
 @end

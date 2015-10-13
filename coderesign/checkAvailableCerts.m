@@ -13,7 +13,7 @@
 @implementation checkAvailableCerts
 
 + (BOOL)isExistAvailableCerts {
-    [DebugLog showDebugLog:@"############################################################################ Checking Signing Certificate IDs from keychain tools..." withDebugLevel:Info];
+    [DebugLog showDebugLog:@"############################################################################ Checking Signing Certificate IDs from keychain tools..." withDebugLevel:Debug];
     
     NSTask *certTask = [[NSTask alloc] init];
     [certTask setLaunchPath:@"/usr/bin/security"];
@@ -58,7 +58,7 @@
         if (cer_index_range.length > 0) {
             [SharedData sharedInstance].resignedCerName = cer_name_;
             NSString *_matchedCer = [NSString stringWithFormat:@"provision profile <%@> will be used to resign", [SharedData sharedInstance].resignedCerName];
-            [DebugLog showDebugLog:_matchedCer withDebugLevel:Info];
+            [DebugLog showDebugLog:_matchedCer withDebugLevel:Debug];
             
             [DebugLog showDebugLog:Pass];
             return true;

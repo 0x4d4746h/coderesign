@@ -53,7 +53,7 @@ static coderesign *shared_coderesign_handler = NULL;
         }
     }
         
-    [DebugLog showDebugLog:@"coderesign task is running..." withDebugLevel:Info];
+    [DebugLog showDebugLog:@"coderesign task is running..." withDebugLevel:Debug];
 
     if([checkCommandArguments checkArguments:argv number:argc]) {
         [self start];
@@ -71,7 +71,7 @@ static coderesign *shared_coderesign_handler = NULL;
         NSString *_watchkitextensionMobileProvisionPath = [SharedData sharedInstance].crossedArguments[minus_ex];
         NSString *_watchkitappMobileProvisionPath       = [SharedData sharedInstance].crossedArguments[minus_wp];
         
-        [DebugLog showDebugLog:@"############################################################################ Starting to dump entitlements from mobile provision file ..." withDebugLevel:Info];
+        [DebugLog showDebugLog:@"############################################################################ Starting to dump entitlements from mobile provision file ..." withDebugLevel:Debug];
         
         dispatch_group_t dumpEntitlementsGroup = dispatch_group_create();
         dispatch_group_enter(dumpEntitlementsGroup);
@@ -79,16 +79,16 @@ static coderesign *shared_coderesign_handler = NULL;
         [[securityEncodeDecodeMobileProvision sharedInstance]dumpEntitlementsFromMobileProvision:_normalMobileProvisionPath withEntitlementsType:Normal withBlock:^(BOOL isFinished, EntitlementsType type) {
             if (isFinished) {
                 
-                [DebugLog showDebugLog:@"normal app entitlements dump done, next to dump watchkit extension.." withDebugLevel:Info];
+                [DebugLog showDebugLog:@"normal app entitlements dump done, next to dump watchkit extension.." withDebugLevel:Debug];
 
                 [[securityEncodeDecodeMobileProvision sharedInstance]dumpEntitlementsFromMobileProvision:_watchkitextensionMobileProvisionPath withEntitlementsType:WatchKitExtension withBlock:^(BOOL isFinished, EntitlementsType type) {
                     if (isFinished) {
                         
-                        [DebugLog showDebugLog:@"watchkit extension entitlements dump done, next to dump watchkit app.." withDebugLevel:Info];
+                        [DebugLog showDebugLog:@"watchkit extension entitlements dump done, next to dump watchkit app.." withDebugLevel:Debug];
                         
                         [[securityEncodeDecodeMobileProvision sharedInstance]dumpEntitlementsFromMobileProvision:_watchkitappMobileProvisionPath withEntitlementsType:WatchKitApp withBlock:^(BOOL isFinished, EntitlementsType type) {
                             if (isFinished) {
-                                [DebugLog showDebugLog:@"All entitlements dump done, start to do next step..." withDebugLevel:Info];
+                                [DebugLog showDebugLog:@"All entitlements dump done, start to do next step..." withDebugLevel:Debug];
                             }
                             
                             dispatch_group_leave(dumpEntitlementsGroup);

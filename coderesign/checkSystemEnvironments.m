@@ -14,19 +14,19 @@
 
 + (BOOL)doCheckSystemEnvironments
 {
-    [DebugLog showDebugLog:@"############################################################################ Checking system environments..." withDebugLevel:Info];
+    [DebugLog showDebugLog:@"############################################################################ Checking system environments..." withDebugLevel:Debug];
     
     if (![[NSFileManager defaultManager] fileExistsAtPath:@"/usr/bin/zip"]) {
         [DebugLog showDebugLog:@"This app cannot run without the zip utility present at /usr/bin/zip" withDebugLevel:Error];
         exit(0);
     }else{
-        [DebugLog showDebugLog:@"Checking zip: Installed" withDebugLevel:Info];
+        [DebugLog showDebugLog:@"Checking zip: Installed" withDebugLevel:Debug];
     }
     if (![[NSFileManager defaultManager] fileExistsAtPath:@"/usr/bin/unzip"]) {
         [DebugLog showDebugLog:@"This app cannot run without the zip utility present at /usr/bin/unzip" withDebugLevel:Error];
         exit(0);
     }else{
-        [DebugLog showDebugLog:@"Checking unzip: Installed" withDebugLevel:Info];
+        [DebugLog showDebugLog:@"Checking unzip: Installed" withDebugLevel:Debug];
     }
     
     if (![SharedData sharedInstance].isOnlyDecodeIcon) {
@@ -34,7 +34,7 @@
             [DebugLog showDebugLog:@"This app cannot run without the zip utility present at /usr/bin/codesign" withDebugLevel:Error];
             exit(0);
         }else{
-            [DebugLog showDebugLog:@"Checking codesign: Installed" withDebugLevel:Info];
+            [DebugLog showDebugLog:@"Checking codesign: Installed" withDebugLevel:Debug];
         }
     }
     

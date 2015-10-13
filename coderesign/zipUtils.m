@@ -67,7 +67,7 @@ static zipUtils *_instance = NULL;
         
         
         NSString *zippingPath = [NSString stringWithFormat:@"Zipping to %@", destinationPath];
-        [DebugLog showDebugLog:zippingPath withDebugLevel:Info];
+        [DebugLog showDebugLog:zippingPath withDebugLevel:Debug];
         
         [_zipTask launch];
     }
@@ -79,7 +79,7 @@ static zipUtils *_instance = NULL;
         _zipTask = nil;
         
         NSString *savedFile = [NSString stringWithFormat:@"Zipping done, file name is %@",_fileName];
-        [DebugLog showDebugLog:savedFile withDebugLevel:Info];
+        [DebugLog showDebugLog:savedFile withDebugLevel:Debug];
         
         _zipFinishedBlock(TRUE);
     }
@@ -90,12 +90,12 @@ static zipUtils *_instance = NULL;
  * Unzip Action
  */
 - (void)doUnZipWithFinishedBlock:(UnzipFinished)finishedBlock {
-    [DebugLog showDebugLog:@"############################################################################ unzip ipa..." withDebugLevel:Info];
+    [DebugLog showDebugLog:@"############################################################################ unzip ipa..." withDebugLevel:Debug];
     
     _unzipFinishedBlock = finishedBlock;
     
     NSString *unzippath = [@"unzip ipa to " stringByAppendingString:[SharedData sharedInstance].workingPath];
-    [DebugLog showDebugLog:unzippath withDebugLevel:Info];
+    [DebugLog showDebugLog:unzippath withDebugLevel:Debug];
     
     NSString *sourcePath = [SharedData sharedInstance].crossedArguments[minus_d];
     
