@@ -142,8 +142,8 @@ static resignAction *_instance = NULL;
 {
     
     _signFinishedBlock = finishedBlock;
-    NSString *_resignFilePath = [@"Start to sign file: " stringByAppendingFormat:@"%@, AppType: %d", filePath, type];
-    [DebugLog showDebugLog:_resignFilePath withDebugLevel:Debug];
+    //NSString *_resignFilePath = [@"Start to sign file: " stringByAppendingFormat:@"%@, AppType: %d", filePath, type];
+    //[DebugLog showDebugLog:_resignFilePath withDebugLevel:Debug];
     
     NSMutableArray *arguments = [NSMutableArray arrayWithObjects:@"-fs", [SharedData sharedInstance].resignedCerName, nil];
     
@@ -215,7 +215,7 @@ static resignAction *_instance = NULL;
     if ([_coderesignTask isRunning] == 0) {
         [timer invalidate];
         _coderesignTask = nil;
-        [DebugLog showDebugLog:@"Codesigning completed" withDebugLevel:Debug];
+        //[DebugLog showDebugLog:@"Codesigning completed" withDebugLevel:Debug];
         [self _doVerifySignature];
     }
 }
