@@ -75,11 +75,11 @@ static ModifyXcent *_instance = NULL;
         id _your_value = [_yourEntitlementsDictionary objectForKey:key];
         if (_your_value != nil) {
             [_xcentDictionary setObject:_your_value forKey:key];
-        }else{
+        }/*else{
             *stop = YES;
             [DebugLog showDebugLog:@"Nil value is founded from your entitlements, so can't rewrite it for xcent file, please check it" withDebugLevel:Error];
             exit(0);
-        }
+        }*/
     }];
     
     [_xcentDictionary writeToFile:xcentFilePath atomically:YES];

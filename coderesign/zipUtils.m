@@ -90,19 +90,22 @@ static zipUtils *_instance = NULL;
  * Unzip Action
  */
 - (void)doUnZipWithFinishedBlock:(UnzipFinished)finishedBlock {
-    [DebugLog showDebugLog:@"############################################################################ unzip ipa..." withDebugLevel:Debug];
+    [DebugLog showDebugLog:@"############################################################################ tar ipa..." withDebugLevel:Debug];
     
     _unzipFinishedBlock = finishedBlock;
     
-    NSString *unzippath = [@"unzip ipa to " stringByAppendingString:[SharedData sharedInstance].workingPath];
+    if (![[NSFileManager defaultManager]fileExistsAtPath:[SharedData sharedInstance].workingPath]) {
+        [[NSFileManager defaultManager]createDirectoryAtPath:[SharedData sharedInstance].workingPath withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    NSString *unzippath = [@"tar ipa to " stringByAppendingString:[SharedData sharedInstance].workingPath];
     [DebugLog showDebugLog:unzippath withDebugLevel:Debug];
     
     NSString *sourcePath = [SharedData sharedInstance].crossedArguments[minus_d];
     
     _unzipTask = [[NSTask alloc] init];
     
-    [_unzipTask setLaunchPath:@"/usr/bin/unzip"];
-    [_unzipTask setArguments:[NSArray arrayWithObjects:@"-o", @"-q", sourcePath, @"-d", [SharedData sharedInstance].workingPath, nil]];
+    [_unzipTask setLaunchPath:@"/usr/bin/tar"];
+    [_unzipTask setArguments:[NSArray arrayWithObjects:@"-x", @"-f", sourcePath, @"-C", [SharedData sharedInstance].workingPath, nil]];
     [NSTimer scheduledTimerWithTimeInterval:1.0 target:_instance selector:@selector(checkUnzip:) userInfo:nil repeats:TRUE];
     [_unzipTask launch];
 }
@@ -117,7 +120,7 @@ static zipUtils *_instance = NULL;
             _unzipFinishedBlock (TRUE);
             
         } else {
-            [DebugLog showDebugLog:@"Unzip Failed" withDebugLevel:Error];
+            [DebugLog showDebugLog:@"tar Failed" withDebugLevel:Error];
             _unzipFinishedBlock(FALSE);
         }
     }
