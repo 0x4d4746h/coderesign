@@ -111,12 +111,12 @@ static parsePlayload *_instance = NULL;
                             }
                         }
                         
-                        break;
+                        //break;
                     }
                 }
             }
         }
-        break;
+        //break;
     }
     
     //check if in-house type
