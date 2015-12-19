@@ -51,9 +51,17 @@ static zipUtils *_instance = NULL;
             destinationPath = [destinationPath stringByAppendingPathComponent:[destinationPathComponents objectAtIndex:i]];
         }
         
+        NSString *rename_indicator;
+        NSString *_origanizational_util = [SharedData sharedInstance].origanizationalUnit;
+        if (_origanizational_util == nil || [_origanizational_util isEqualToString:@""]) {
+            rename_indicator = @"-resigned";
+        }else{
+            rename_indicator = [@"-" stringByAppendingString:_origanizational_util];
+        }
+        
         _fileName = [sourcePath lastPathComponent];
         _fileName = [_fileName substringToIndex:([_fileName length] - ([[sourcePath pathExtension] length] + 1))];
-        _fileName = [_fileName stringByAppendingString:@"-resigned"];
+        _fileName = [_fileName stringByAppendingString:rename_indicator];
         _fileName = [_fileName stringByAppendingPathExtension:@"ipa"];
         
         destinationPath = [destinationPath stringByAppendingPathComponent:_fileName];
@@ -67,6 +75,8 @@ static zipUtils *_instance = NULL;
         
         
         NSString *zippingPath = [NSString stringWithFormat:@"Zipping to %@", destinationPath];
+        [SharedData sharedInstance].resignedIPAPath = destinationPath;
+        
         [DebugLog showDebugLog:zippingPath withDebugLevel:Debug];
         
         [_zipTask launch];

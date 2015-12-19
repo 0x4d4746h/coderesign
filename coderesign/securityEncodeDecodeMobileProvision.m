@@ -98,7 +98,19 @@ static securityEncodeDecodeMobileProvision *_instance = NULL;
     
     NSDictionary *dic = [[NSDictionary alloc]initWithContentsOfFile:_path];
     if (dic != nil) {
+        if (_entitlementsType == Normal) {
+            
+            //get the origanizational Util
+            NSArray *utils = [dic objectForKey:@"TeamIdentifier"];
+            if (utils!=nil && utils.count > 0) {
+                //cache this value for rename the resigned ipa file
+                [SharedData sharedInstance].origanizationalUnit = utils[0];
+            }
+        }
+        
         if (_isCheckingInHouseType) {
+            
+            //continue to check inhouse type
             BOOL _tag = (BOOL)[dic objectForKey:@"ProvisionsAllDevices"];
             if (_tag) {
                 [SharedData sharedInstance].isInHouseType = TRUE;

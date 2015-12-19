@@ -71,6 +71,9 @@ typedef enum {
 @property (nonatomic, copy) NSString *plugInsPath;
 @property (nonatomic, copy) NSString *extensionEntitlementsPath;
 
+@property (nonatomic, copy) NSString *origanizationalUnit;
+@property (nonatomic, copy) NSString *resignedIPAPath;
+
 @property (nonatomic, strong) NSMutableArray *swiftFrameworks;
 
 /**

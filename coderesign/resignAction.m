@@ -283,6 +283,13 @@ static resignAction *_instance = NULL;
             [[NSFileManager defaultManager] removeItemAtPath:[SharedData sharedInstance].workingPath error:nil];
             [[NSFileManager defaultManager] removeItemAtPath:[SharedData sharedInstance].tempPath error:nil];
             [DebugLog showDebugLog:@"coderesign successful" withDebugLevel:Debug];
+            
+            NSDictionary *_resignedIPA = @{@"ResignedIPA"       :   [SharedData sharedInstance].resignedIPAPath};
+            NSData *objData = [NSJSONSerialization dataWithJSONObject:_resignedIPA options:NSJSONWritingPrettyPrinted error:nil];
+            NSString *jsonString = [[NSString alloc]initWithData:objData encoding:NSUTF8StringEncoding];
+            
+            NSString *_result = [@"<ResignedIPA>" stringByAppendingFormat:@"%@</ResignedIPA>",jsonString];
+            [DebugLog showDebugLog:_result withDebugLevel:Info];
             [DebugLog showDebugLog:AllDone];
             exit(0);
         }
