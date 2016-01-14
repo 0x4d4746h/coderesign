@@ -62,6 +62,11 @@ static coderesign *shared_coderesign_handler = NULL;
 
 - (void)start
 {
+    //remove the cache file at first
+    if ([[NSFileManager defaultManager]fileExistsAtPath:[SharedData sharedInstance].workingPath]){
+        [[NSFileManager defaultManager] removeItemAtPath:[SharedData sharedInstance].workingPath error:nil];
+    }
+    
     if (![SharedData sharedInstance].isOnlyDecodeIcon) {
         
         /**

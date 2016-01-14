@@ -49,11 +49,11 @@ static securityEncodeDecodeMobileProvision *_instance = NULL;
 - (void)checkIfInHouseType:(NSString *)mobileProvisionFilePath withBlock:(finished)finishedBlock
 {
     _finishedBlock = finishedBlock;
-    if (mobileProvisionFilePath != NULL) {
+    if (mobileProvisionFilePath != NULL && [[NSFileManager defaultManager]fileExistsAtPath:mobileProvisionFilePath]) {
         _isCheckingInHouseType = YES;
         [self _dump:mobileProvisionFilePath];
     }else{
-        _finishedBlock(FALSE, Normal);
+        _finishedBlock(TRUE, Normal);
     }
 }
 

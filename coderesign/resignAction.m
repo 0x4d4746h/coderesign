@@ -270,8 +270,8 @@ static resignAction *_instance = NULL;
             NSString *error = [[_coderesignResult stringByAppendingString:@"\n\n"] stringByAppendingString:_verificationResult];
             NSString *info = [NSString stringWithFormat:@"Signing failed: %@ ", error ];
             [DebugLog showDebugLog:info withDebugLevel:Error];
-            _signFinishedBlock (FALSE);
-            exit(0);
+            _signFinishedBlock (TRUE);
+            //exit(0);
         }
     }
 }
