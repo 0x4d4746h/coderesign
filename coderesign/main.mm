@@ -7,11 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "coderesign.h"
+#import "MGFCodeResign.h"
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
-        [[coderesign sharedInstance] resignWithArgv:argv argumentsNumber: argc];
+        [[MGFCodeResign sharedInstance] runCodeResignWithArgv:argv argumentsNumber: argc];
     }
 
     [[NSRunLoop currentRunLoop] run];

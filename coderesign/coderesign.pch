@@ -15,4 +15,6 @@
 // If you don't want to show DEBUG level info, set this marco to FALSE
 #define SHOW_DEBUG_LOG TRUE
 
+#define CHECK_INHOUSE_TYPE FALSE
+
 #endif /* coderesign_pch */
