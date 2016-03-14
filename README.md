@@ -8,15 +8,10 @@
 
 # How to use
 #### code resign and decompress icon png.
-<pre>coderesign -d /you/ipa/path/xx.ipa -p your_distribution.mobileprovision -ci certificates_index -py your-python</pre>
-Or
-<pre>coderesign -d /you/ipa/path/xx.ipa -p your_distribution.mobileprovision -ex your_extension_distribution.mobileprovision -wp your_watchkitapp_distribution_mobileprovision -ci certificates_index -py your-python</pre>
+<pre>coderesign -d /you/ipa/path/xx.ipa -p your_app.mobileprovision -ex your_watchkitextension.mobileprovision -wp your_watchkitapp_mobileprovision -se your_sharedExtension_mobileprovision -ci certificates_index -py your-python</pre>
+
 #### only code resign
-<pre>coderesign -d /you/ipa/path/xx.ipa -p your_distribution.mobileprovision  -ci certificates_index</pre>
-Or
-<pre>coderesign -d /you/ipa/path/xx.ipa -p your_distribution.mobileprovision -ex your_extension_distribution.mobileprovision -wp your_watchkitapp_distribution_mobileprovision -ci certificates_index</pre>
-#### only decompress icon png.
-<pre>coderesign -d /you/ipa/path/xx.ipa -py your-python</pre>
+<pre>coderesign -d /you/ipa/path/xx.ipa -p your_app.mobileprovision -ex your_watchkitextension.mobileprovision -wp your_watchkitapp_mobileprovision -se your_sharedExtension_mobileprovision -ci certificates_index</pre>
 
 # Support list:
 * Support resign normal app, watch kit extension, watch kit app, widget extension and swift dylibs.
