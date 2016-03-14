@@ -187,7 +187,6 @@
                 self.mgfSharedData.watchKitExtensionID = identifierInProvisioning;
                 
                 if (!identifierOK) {
-                    [self __mgf_modifyWatchKitExtensionInfoPlistForNSExtension];
                     [_mgfModifyXcent mgf_modifyXcentWithAppType:Extension];
                 }
             }else if (_currentAppType == WatchApp) {
@@ -195,6 +194,7 @@
                 infoPlistPath = [self.mgfSharedData.watchKitAppPath stringByAppendingPathComponent:kInfo_plist];
                 self.mgfSharedData.watchKitAppID = identifierInProvisioning;
                 if (!identifierOK) {
+                    [self __mgf_modifyWatchKitExtensionInfoPlistForNSExtension];
                     [self __mgf_modifyWatchKitAppCompanionID];
                     [_mgfModifyXcent mgf_modifyXcentWithAppType:WatchApp];
                 }
@@ -244,9 +244,10 @@
                 [_watchKitExtensionInfoPlistDic writeToFile:_watchKitExtensionInfoPlist atomically:YES];
             }
         }
+        NSLog(@"modifyWatchKitExtensionInfoPlistForNSExtension: %@", _watchKitExtensionInfoPlistDic);
     }
     
-    //NSLog(@"modifyWatchKitExtensionInfoPlistForNSExtension: %@", _watchKitExtensionInfoPlistDic);
+    
 }
 
 - (void)__mgf_modifyWatchKitAppCompanionID {
@@ -258,7 +259,7 @@
         
         [_watchKitAppInfoPlistDic writeToFile:_watchKitAppInfoPlist atomically:YES];
         
-        // NSLog(@"modifyWatchKitAppCompanionID: %@", _watchKitAppInfoPlist);
+         NSLog(@"modifyWatchKitAppCompanionID: %@", _watchKitAppInfoPlist);
     }
 }
 
