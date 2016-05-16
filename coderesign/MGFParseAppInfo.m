@@ -76,8 +76,31 @@ static MGFParseAppInfo *_instance = NULL;
         NSString *normal_icon = @"";
         if (type == MainApp && self.mgfSharedData.isResignAndDecode) {
             
+            if (_iconName == nil) {
+                NSDictionary *bundleIcons = [infoPlist_dictionary objectForKey:@"CFBundleIcons"];
+                if(bundleIcons) {
+                    NSDictionary *primaryIcon = [bundleIcons objectForKey:@"CFBundlePrimaryIcon"];
+                    if(primaryIcon) {
+                        NSArray *iconFiles = [primaryIcon objectForKey:@"CFBundleIconFiles"];
+                        if (iconFiles) {
+                            _iconName = iconFiles[0];
+                            
+                        }
+                    }
+                }
+                //                CFBundleIcons =     {
+                //                    CFBundlePrimaryIcon =         {
+                //                        CFBundleIconFiles =             (
+                //                                                         AppIcon40x40,
+                //                                                         AppIcon60x60
+                //                                                         );
+                //                        UIPrerenderedIcon = 1;
+                //                    };
+                //                };
+            }
+            
             if (_iconName != nil) {
-                
+                _iconName = [_iconName stringByAppendingString:@"@2x.png"];
                 NSString *icon_file   = [self.mgfSharedData.appPath stringByAppendingPathComponent:_iconName];
                 NSData *_icon_data = [[NSFileManager defaultManager]contentsAtPath:icon_file];
                 NSString *destinationPath = self.mgfSharedData.commandPath;
